@@ -1,33 +1,143 @@
-/* ===== Outdoor / energy colors on top of the white theme ===== */
-:root {
-  --r-heading-color: #2e7d32;   /* forest green headings */
-  --r-link-color: #0288d1;
-}
-.reveal .slides section { text-align: left; }
-.reveal .title-slide { text-align: center; }
-.reveal .title-slide h1 { color: #2e7d32; }
-.reveal .small { font-size: 0.6em; color: #555; }
-.reveal table { font-size: 0.7em; margin: 20px 0; }
-.reveal .mixes .best { background: #fff8e1; font-weight: bold; }
-.reveal .ok { color: #2e7d32; }
-.reveal .no { color: #ef6c00; }
+/* =====================================================
+   deck.css: our own design, layered on top of the
+   reveal.js "white" theme (loaded before this file).
+   ===================================================== */
 
-/* ===== Planner slide: controls on the left, graph on the right ===== */
-.planner { display: flex; gap: 30px; align-items: flex-start; font-size: 0.55em; }
-.panel { flex: 1; }
-.panel label { display: block; margin-bottom: 10px; font-weight: bold; }
-.panel p { margin: 8px 0 4px; }
-input[type="range"] { width: 100%; accent-color: #2e7d32; }
-.bar { background: #ddd; height: 16px; border-radius: 8px; overflow: hidden; }
-.fill { height: 100%; width: 0%; background: #43a047; transition: width 0.3s; }
-.fill.bad { background: #e53935; }
-.badge { padding: 3px 12px; border-radius: 12px; color: white; font-weight: bold; }
-.badge.feasible { background: #2e7d32; }
-.badge.over { background: #c62828; }
-.badge.short { background: #ef6c00; }
-button {
-  background: #f9a825; border: none; padding: 10px 16px; font-size: 1em;
-  border-radius: 8px; cursor: pointer; margin-top: 12px;
+/* ----- 1. Color palette as CSS variables -----
+   A CSS variable is a named value. Define it once here, then
+   use it anywhere with var(--name). Change a color here and
+   it updates everywhere. */
+:root {
+  --bg:          #ffffff;   /* page background: white */
+  --panel:       #f5f8ff;   /* very light blue for cards / panels */
+  --border:      #dbe4f3;   /* soft border and grid color */
+  --navy:        #0b1f3a;   /* main dark text */
+  --blue:        #2563eb;   /* main accent */
+  --sky:         #3b82f6;   /* lighter accent (still dark enough to read on white) */
+  --ice:         #1e3a8a;   /* deep blue for labels */
+  --text:        #0b1f3a;   /* normal text: dark navy */
+  --muted:       #64748b;   /* small grey text */
+
+  /* Status colors: kept different from each other on purpose,
+     and dark enough to read on a white background */
+  --ok:    #16a34a;   /* Feasible: green check */
+  --over:  #dc2626;   /* Over budget: red */
+  --short: #d97706;   /* Not enough energy: amber */
+
+  /* Reveal's theme reads these variables, so we override them */
+  --r-background-color: var(--bg);
+  --r-main-color: var(--text);
+  --r-heading-color: var(--navy);
+  --r-link-color: var(--blue);
+  --r-main-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --r-heading-font: var(--r-main-font);
+  --r-heading-text-transform: none;    /* no ALL CAPS headings */
+  --r-heading-font-weight: 700;
+  --r-heading-letter-spacing: -0.02em;
 }
-/* Fixed size in "slide pixels", so Reveal's scaling shrinks it neatly */
-#graph { width: 460px; height: 460px; border: 1px solid #ccc; background: #fafffa; }
+
+/* ----- 2. Background: plain white ----- */
+body, .reveal-viewport { background: var(--bg); }
+
+/* ----- 3. General slide text ----- */
+.reveal .slides section { text-align: left; }
+.reveal h2 {
+  border-left: 6px solid var(--sky);   /* accent bar beside headings */
+  padding-left: 18px;
+}
+.reveal code {
+  background: var(--panel);
+  color: var(--blue);
+  padding: 2px 10px;
+  border-radius: 6px;
+}
+.reveal .small { font-size: 0.6em; color: var(--muted); }
+
+/* Tables: clean rows, no heavy borders */
+.reveal table { font-size: 0.7em; margin: 20px 0; border-collapse: collapse; }
+.reveal table th { color: var(--sky); border-bottom: 2px solid var(--blue); }
+.reveal table td { border-bottom: 1px solid var(--border); }
+
+/* ----- 4. Title and "coming soon" slides: centered ----- */
+.reveal .slides section.title-slide,
+.reveal .slides section.coming-soon { text-align: center; }
+.reveal .title-slide h1 { color: var(--navy); font-size: 2.6em; }
+.reveal .title-slide h3 { color: var(--blue); font-weight: 400; }
+.reveal .coming-soon h2 { border: none; padding: 0; color: var(--blue); }
+
+/* ----- 5. Work-in-progress labels ----- */
+/* The pill-shaped tag on the title and last slides */
+.reveal .wip-tag {
+  display: inline-block;
+  font-size: 0.45em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--short);
+  border: 1px dashed var(--short);
+  border-radius: 999px;
+  padding: 4px 16px;
+}
+/* The small badge pinned to the top-right corner of the screen */
+.corner-badge {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 50;
+  font: 600 12px/1 system-ui, sans-serif;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  background: var(--short);
+  padding: 6px 10px;
+  border-radius: 6px;
+  opacity: 0.85;
+}
+
+/* ----- 6. Planner slide: panel on the left, graph on the right ----- */
+.planner { display: flex; gap: 30px; align-items: flex-start; font-size: 0.55em; }
+.panel {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+.panel label { display: block; margin-bottom: 12px; font-weight: 600; color: var(--ice); }
+.panel p { margin: 10px 0 4px; }
+input[type="range"] { width: 100%; accent-color: var(--sky); }
+
+/* Progress bars */
+.bar { background: var(--border); height: 14px; border-radius: 7px; overflow: hidden; }
+.fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--sky));
+  transition: width 0.3s;
+}
+.fill.bad { background: var(--over); }
+
+/* Status badge: each state has its own color AND symbol (set in planner.js) */
+.badge { padding: 4px 14px; border-radius: 999px; font-weight: 700; color: #ffffff; }
+.badge.feasible { background: var(--ok); }
+.badge.over     { background: var(--over); }
+.badge.short    { background: var(--short); }
+
+button {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 1em;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 14px;
+}
+button:hover { background: var(--ice); }
+
+/* Graph: fixed size in "slide pixels", so Reveal's scaling shrinks it neatly */
+#graph {
+  width: 460px;
+  height: 460px;
+  border-radius: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}

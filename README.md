@@ -6,8 +6,9 @@ reveal.js 6.0.2 is saved in `vendor/`, so the deck works without internet.
 
 ## Files
 - `index.html` has the slides (each `<section>` is one slide) and starts Reveal
-- `deck.css` holds our colors and the planner layout
+- `deck.css` holds the blue design (colors are CSS variables at the top) and the planner layout
 - `planner.js` is the interactive slide (same math and graph code as the starter site)
+- `drafts/later-slides.html` holds finished slides that aren't in the deck yet (copy a `<section>` back into index.html to use it)
 - `vendor/` contains the reveal.js library files (MIT license)
 
 ## Host it free on GitHub Pages

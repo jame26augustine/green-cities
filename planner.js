@@ -24,6 +24,19 @@ function enoughEnergy(x, y) { return totalEnergy(x, y) >= ENERGY_GOAL; }
 // A point is feasible when BOTH inequalities are true
 function isFeasible(x, y)  { return inBudget(x, y) && enoughEnergy(x, y); }
 
+// ----- Graph colors (match the white + blue design in deck.css) -----
+// The canvas can't read CSS variables, so the colors live here too.
+const COLORS = {
+  grid: "#e2e8f0",                       // faint grey grid lines on white
+  axis: "#334155",                       // dark axes and numbers
+  region: "rgba(37, 99, 235, 0.18)",     // see-through blue feasible region
+  budget: "#dc2626",                     // budget line (red)
+  energy: "#d97706",                     // energy line (amber)
+  point: "#1e3a8a",                      // whole-number solution dots (deep blue)
+  current: "#16a34a",                    // your slider choice (green)
+  outline: "#0b1f3a"                     // dark ring around your choice
+};
+
 // ----- 3. Page elements (filled in by startPlanner) -----
 let solarSlider, geoSlider, solarValue, geoValue, costText, energyText;
 let costBar, energyBar, badge, recommendBtn, canvas, ctx;
@@ -50,13 +63,13 @@ function update() {
 
   // Badge: check budget first, then energy
   if (!inBudget(x, y)) {
-    badge.textContent = "Over budget";
+    badge.textContent = "✕ Over budget";
     badge.className = "badge over";
   } else if (!enoughEnergy(x, y)) {
-    badge.textContent = "Not enough energy";
+    badge.textContent = "⚠ Not enough energy";
     badge.className = "badge short";
   } else {
-    badge.textContent = "Feasible";
+    badge.textContent = "✓ Feasible";
     badge.className = "badge feasible";
   }
 
@@ -99,17 +112,17 @@ function drawGraph(curX, curY) {
 
   // Grid lines and numbers
   ctx.font = "12px Arial";
-  ctx.fillStyle = "#333";
+  ctx.fillStyle = COLORS.axis;
   for (let i = 0; i <= MAX_UNITS; i++) {
-    line(i, 0, i, MAX_UNITS, "#e0e0e0", 1);
-    line(0, i, MAX_UNITS, i, "#e0e0e0", 1);
+    line(i, 0, i, MAX_UNITS, COLORS.grid, 1);
+    line(0, i, MAX_UNITS, i, COLORS.grid, 1);
     const [px, py] = toPx(i, 0);
     ctx.fillText(i, px - 3, py + 16);
     const [qx, qy] = toPx(0, i);
     ctx.fillText(i, qx - 16, qy + 4);
   }
-  line(0, 0, MAX_UNITS, 0, "#333", 2);   // x-axis
-  line(0, 0, 0, MAX_UNITS, "#333", 2);   // y-axis
+  line(0, 0, MAX_UNITS, 0, COLORS.axis, 2);   // x-axis
+  line(0, 0, 0, MAX_UNITS, COLORS.axis, 2);   // y-axis
   ctx.fillText("x = solar units", canvas.width / 2 - 40, canvas.height - 12);
   ctx.save();
   ctx.translate(14, canvas.height / 2 + 50);
@@ -119,7 +132,7 @@ function drawGraph(curX, curY) {
 
   // Shade the feasible region: color every tiny cell whose
   // center makes both inequalities true. Simple and accurate!
-  ctx.fillStyle = "rgba(67, 160, 71, 0.35)";
+  ctx.fillStyle = COLORS.region;
   const step = 0.02;
   for (let gx = 0; gx < MAX_UNITS; gx += step) {
     for (let gy = 0; gy < MAX_UNITS; gy += step) {
@@ -131,23 +144,23 @@ function drawGraph(curX, curY) {
   }
 
   // Budget line: 30000x + 50000y = 200000 -> (0, 4) to (6.67, 0)
-  line(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, "#c62828", 2);
+  line(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, COLORS.budget, 2);
   // Energy line: 1100x + 1500y = 6000 -> (0, 4) to (5.45, 0)
-  line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, "#0277bd", 2);
-  ctx.fillStyle = "#c62828";
+  line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 2);
+  ctx.fillStyle = COLORS.budget;
   ctx.fillText("Budget line", ...offset(toPx(5.2, 1.3)));
-  ctx.fillStyle = "#0277bd";
+  ctx.fillStyle = COLORS.energy;
   ctx.fillText("Energy line", ...offset(toPx(1.2, 2.6), -80));
 
   // Dots for every whole-number feasible mix
   for (let x = 0; x <= MAX_UNITS; x++) {
     for (let y = 0; y <= MAX_UNITS; y++) {
-      if (isFeasible(x, y)) dot(x, y, 5, "#1b5e20");
+      if (isFeasible(x, y)) dot(x, y, 5, COLORS.point);
     }
   }
 
   // Highlight the current slider choice
-  dot(curX, curY, 9, "#f9a825", "#333");
+  dot(curX, curY, 9, COLORS.current, COLORS.outline);
 }
 
 // Small helper to nudge a label so it doesn't sit on the line
