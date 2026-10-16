@@ -1,9 +1,8 @@
-// ===================================================
+
 // planner.js: the interactive slide.
 // This is the SAME math and drawing code as site/script.js.
 // The difference: everything starts inside startPlanner(), which
 // index.html calls when the planner slide is shown.
-// ===================================================
 
 // ----- 1. The numbers from the problem -----
 const SOLAR_COST = 30000;     // dollars per solar unit
@@ -18,9 +17,9 @@ const MAX_UNITS = 7;          // sliders and graph go from 0 to 7
 function totalCost(x, y)   { return SOLAR_COST * x + GEO_COST * y; }
 function totalEnergy(x, y) { return SOLAR_ENERGY * x + GEO_ENERGY * y; }
 
-// Budget: 30000x + 50000y <= 200000
+// Budget: 30000x + 50000y ≤ 200000
 function inBudget(x, y)    { return totalCost(x, y) <= BUDGET; }
-// Energy: 1100x + 1500y >= 6000
+// Energy: 1100x + 1500y ≥ 6000
 function enoughEnergy(x, y) { return totalEnergy(x, y) >= ENERGY_GOAL; }
 // A point is feasible when BOTH inequalities are true
 function isFeasible(x, y)  { return inBudget(x, y) && enoughEnergy(x, y); }
