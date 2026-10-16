@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- class="locked" hides the deck until gate.js unlocks it -->
+<html lang="en" class="locked">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Green Cities: Powering Whitefish</title>
+  <link rel="icon" href="data:,">  <!-- empty icon, so the browser does not ask for a missing favicon -->
   <!-- reveal.js is saved in the vendor/ folder, so the deck works with no internet -->
   <link rel="stylesheet" href="vendor/reset.css">
   <link rel="stylesheet" href="vendor/reveal.css">
@@ -12,6 +14,17 @@
   <link rel="stylesheet" href="deck.css">
 </head>
 <body>
+  <!-- PASSWORD GATE: covers the whole screen until the right password is entered (see gate.js) -->
+  <div id="gate">
+    <form id="gateForm" class="gate-box">
+      <p class="wip-tag">Green Cities · Powering Whitefish</p>
+      <h2>Enter the password</h2>
+      <input type="password" id="gateInput" placeholder="Password" autocomplete="off" autofocus>
+      <button type="submit">Enter</button>
+      <p id="gateError" class="gate-error" aria-live="polite"></p>
+    </form>
+  </div>
+
   <!-- Reveal looks for .reveal > .slides > section. Each <section> is one slide. -->
   <!-- Corner badge shown on every slide. It sits outside .reveal so it never scales or moves. -->
   <div class="corner-badge">DRAFT</div>
@@ -88,7 +101,9 @@
   <script src="planner.js"></script>
   <script>
     // Start the presentation. hash:true puts the slide number in the URL.
-    Reveal.initialize({ hash: true, width: 1200, height: 700 });
+    // keyboard:false means arrow keys do nothing yet; gate.js turns
+    // the keyboard back on after the password is correct.
+    Reveal.initialize({ hash: true, width: 1200, height: 700, keyboard: false });
 
     // Set up the planner once when its slide is first shown.
     function maybeStartPlanner() {
@@ -97,5 +112,7 @@
     Reveal.on("ready", maybeStartPlanner);       // in case we open on that slide
     Reveal.on("slidechanged", maybeStartPlanner); // when we arrive at it
   </script>
+  <!-- The password gate goes last, after Reveal has started -->
+  <script src="gate.js"></script>
 </body>
 </html>
