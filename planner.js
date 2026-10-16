@@ -25,16 +25,17 @@ function enoughEnergy(x, y) { return totalEnergy(x, y) >= ENERGY_GOAL; }
 // A point is feasible when BOTH inequalities are true
 function isFeasible(x, y)  { return inBudget(x, y) && enoughEnergy(x, y); }
 
-// ----- Graph colors (match the blue design in deck.css) -----
+// ----- Graph colors (match the white + blue design in deck.css) -----
+// The canvas can't read CSS variables, so the colors live here too.
 const COLORS = {
-  grid: "#1e3a5f",                       // faint grid lines
-  axis: "#94a3b8",                       // axes and numbers
-  region: "rgba(96, 165, 250, 0.30)",    // light-blue feasible region
-  budget: "#ef4444",                     // budget line (red)
-  energy: "#f59e0b",                     // energy line (amber)
-  point: "#dbeafe",                      // whole-number solution dots
-  current: "#22c55e",                    // your slider choice
-  outline: "#0b1f3a"
+  grid: "#e2e8f0",                       // faint grey grid lines on white
+  axis: "#334155",                       // dark axes and numbers
+  region: "rgba(37, 99, 235, 0.18)",     // see-through blue feasible region
+  budget: "#dc2626",                     // budget line (red)
+  energy: "#d97706",                     // energy line (amber)
+  point: "#1e3a8a",                      // whole-number solution dots (deep blue)
+  current: "#16a34a",                    // your slider choice (green)
+  outline: "#0b1f3a"                     // dark ring around your choice
 };
 
 // ----- 3. Page elements (filled in by startPlanner) -----

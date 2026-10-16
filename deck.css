@@ -8,24 +8,27 @@
    use it anywhere with var(--name). Change a color here and
    it updates everywhere. */
 :root {
-  --navy:        #0b1f3a;   /* deep background */
-  --navy-soft:   #13294b;   /* cards / panels */
+  --bg:          #ffffff;   /* page background: white */
+  --panel:       #f5f8ff;   /* very light blue for cards / panels */
+  --border:      #dbe4f3;   /* soft border and grid color */
+  --navy:        #0b1f3a;   /* main dark text */
   --blue:        #2563eb;   /* main accent */
-  --sky:         #60a5fa;   /* lighter accent */
-  --ice:         #dbeafe;   /* very light blue text */
-  --text:        #e2e8f0;   /* normal text */
-  --muted:       #94a3b8;   /* small grey text */
+  --sky:         #3b82f6;   /* lighter accent (still dark enough to read on white) */
+  --ice:         #1e3a8a;   /* deep blue for labels */
+  --text:        #0b1f3a;   /* normal text: dark navy */
+  --muted:       #64748b;   /* small grey text */
 
-  /* Status colors: kept different from each other on purpose */
-  --ok:    #22c55e;   /* Feasible: green check */
-  --over:  #ef4444;   /* Over budget: red */
-  --short: #f59e0b;   /* Not enough energy: amber */
+  /* Status colors: kept different from each other on purpose,
+     and dark enough to read on a white background */
+  --ok:    #16a34a;   /* Feasible: green check */
+  --over:  #dc2626;   /* Over budget: red */
+  --short: #d97706;   /* Not enough energy: amber */
 
   /* Reveal's theme reads these variables, so we override them */
-  --r-background-color: var(--navy);
+  --r-background-color: var(--bg);
   --r-main-color: var(--text);
-  --r-heading-color: #ffffff;
-  --r-link-color: var(--sky);
+  --r-heading-color: var(--navy);
+  --r-link-color: var(--blue);
   --r-main-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --r-heading-font: var(--r-main-font);
   --r-heading-text-transform: none;    /* no ALL CAPS headings */
@@ -33,10 +36,8 @@
   --r-heading-letter-spacing: -0.02em;
 }
 
-/* ----- 2. Background: navy with a soft blue glow ----- */
-body, .reveal-viewport {
-  background: radial-gradient(circle at 80% 10%, #1e3a8a 0%, var(--navy) 55%);
-}
+/* ----- 2. Background: plain white ----- */
+body, .reveal-viewport { background: var(--bg); }
 
 /* ----- 3. General slide text ----- */
 .reveal .slides section { text-align: left; }
@@ -45,8 +46,8 @@ body, .reveal-viewport {
   padding-left: 18px;
 }
 .reveal code {
-  background: var(--navy-soft);
-  color: var(--sky);
+  background: var(--panel);
+  color: var(--blue);
   padding: 2px 10px;
   border-radius: 6px;
 }
@@ -55,14 +56,14 @@ body, .reveal-viewport {
 /* Tables: clean rows, no heavy borders */
 .reveal table { font-size: 0.7em; margin: 20px 0; border-collapse: collapse; }
 .reveal table th { color: var(--sky); border-bottom: 2px solid var(--blue); }
-.reveal table td { border-bottom: 1px solid #1e3a5f; }
+.reveal table td { border-bottom: 1px solid var(--border); }
 
 /* ----- 4. Title and "coming soon" slides: centered ----- */
 .reveal .slides section.title-slide,
 .reveal .slides section.coming-soon { text-align: center; }
-.reveal .title-slide h1 { color: #fff; font-size: 2.6em; }
-.reveal .title-slide h3 { color: var(--sky); font-weight: 400; }
-.reveal .coming-soon h2 { border: none; padding: 0; color: var(--sky); }
+.reveal .title-slide h1 { color: var(--navy); font-size: 2.6em; }
+.reveal .title-slide h3 { color: var(--blue); font-weight: 400; }
+.reveal .coming-soon h2 { border: none; padding: 0; color: var(--blue); }
 
 /* ----- 5. Work-in-progress labels ----- */
 /* The pill-shaped tag on the title and last slides */
@@ -84,7 +85,7 @@ body, .reveal-viewport {
   z-index: 50;
   font: 600 12px/1 system-ui, sans-serif;
   letter-spacing: 0.15em;
-  color: var(--navy);
+  color: #ffffff;
   background: var(--short);
   padding: 6px 10px;
   border-radius: 6px;
@@ -95,8 +96,8 @@ body, .reveal-viewport {
 .planner { display: flex; gap: 30px; align-items: flex-start; font-size: 0.55em; }
 .panel {
   flex: 1;
-  background: var(--navy-soft);
-  border: 1px solid #1e3a5f;
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px 24px;
 }
@@ -105,7 +106,7 @@ body, .reveal-viewport {
 input[type="range"] { width: 100%; accent-color: var(--sky); }
 
 /* Progress bars */
-.bar { background: #1e3a5f; height: 14px; border-radius: 7px; overflow: hidden; }
+.bar { background: var(--border); height: 14px; border-radius: 7px; overflow: hidden; }
 .fill {
   height: 100%;
   width: 0%;
@@ -115,9 +116,9 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
 .fill.bad { background: var(--over); }
 
 /* Status badge: each state has its own color AND symbol (set in planner.js) */
-.badge { padding: 4px 14px; border-radius: 999px; font-weight: 700; color: var(--navy); }
+.badge { padding: 4px 14px; border-radius: 999px; font-weight: 700; color: #ffffff; }
 .badge.feasible { background: var(--ok); }
-.badge.over     { background: var(--over); color: #fff; }
+.badge.over     { background: var(--over); }
 .badge.short    { background: var(--short); }
 
 button {
@@ -130,13 +131,13 @@ button {
   cursor: pointer;
   margin-top: 14px;
 }
-button:hover { background: var(--sky); color: var(--navy); }
+button:hover { background: var(--ice); }
 
 /* Graph: fixed size in "slide pixels", so Reveal's scaling shrinks it neatly */
 #graph {
   width: 460px;
   height: 460px;
   border-radius: 16px;
-  background: var(--navy-soft);
-  border: 1px solid #1e3a5f;
+  background: var(--panel);
+  border: 1px solid var(--border);
 }
