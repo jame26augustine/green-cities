@@ -84,13 +84,78 @@
         </div>
       </section>
 
-      <!-- SLIDE 5: Coming soon (the deck is a work in progress).
-           The finished slides are saved in drafts/later-slides.html -->
-      <section class="coming-soon">
-        <p class="wip-tag">Draft · Work in progress</p>
-        <h2>Coming soon ᯓ➤</h2>
-        <p>trying to find out how to show all possible out comes from the slide before</p>
-        <p class="small">Thanks for checking it out!</p>
+      <!-- Mixes Compared -->
+      <section>
+        <h2>Mixes Compared</h2>
+        <table class="mixes">
+          <tr><th>Mix (x, y)</th><th>Cost</th><th>Energy</th><th>Result</th></tr>
+          <tr><td>(6, 0)</td><td>$180,000</td><td>6,600</td><td class="ok">Feasible</td></tr>
+          <tr class="best"><td>(5, 1) ⭐</td><td>$200,000</td><td>7,000</td><td class="ok">Feasible</td></tr>
+          <tr><td>(3, 2)</td><td>$190,000</td><td>6,300</td><td class="ok">Feasible</td></tr>
+          <tr><td>(0, 4)</td><td>$200,000</td><td>6,000</td><td class="ok">Feasible</td></tr>
+          <tr><td>(5, 0)</td><td>$150,000</td><td>5,500</td><td class="no">Not enough energy</td></tr>
+          <tr><td>(4, 1)</td><td>$170,000</td><td>5,900</td><td class="no">Not enough energy</td></tr>
+        </table>
+      </section>
+
+      <!-- Recommendation -->
+      <section>
+        <h2>Recommendation: 5 Solar + 1 Geothermal</h2>
+        <p><b>$200,000</b> · <b>7,000 kWh/month</b></p>
+        <ul>
+          <li class="fragment">Most energy of any feasible mix, 1,000 kWh over the goal</li>
+          <li class="fragment">Uses the whole budget, with nothing wasted</li>
+          <li class="fragment">The geothermal heat pump helps in cold, dark Montana winters</li>
+        </ul>
+      </section>
+
+      <!-- Design Map -->
+      <section>
+        <h2>Design Map · Whitefish Grid</h2>
+        <img src="images/design-map.png" alt="Flow from 5 solar and 1 geothermal into the neighborhood grid" style="max-height:420px; width:auto;">
+        <p class="small">5 solar units and 1 geothermal unit feed the neighborhood loads.</p>
+      </section>
+
+      <!-- Spreadsheet Analysis -->
+      <section>
+        <h2>Spreadsheet Analysis</h2>
+        <table class="mixes">
+          <tr><th>Item</th><th>Amount</th></tr>
+          <tr><td>Solar install (5 × $30,000)</td><td>$150,000</td></tr>
+          <tr><td>Geothermal install (1 × $50,000)</td><td>$50,000</td></tr>
+          <tr class="best"><td>Total install</td><td>$200,000</td></tr>
+          <tr><td>Est. yearly maintenance (2% solar + 3% geo)</td><td>$4,500</td></tr>
+          <tr><td>Monthly energy</td><td>7,000 kWh</td></tr>
+        </table>
+        <p class="small fragment">Lifecycle emissions ≈ 42 g CO₂e/kWh for this mix vs ≈ 820 g for coal. Same 7,000 kWh from coal ≈ 5.7 tons CO₂e; this mix ≈ 0.3 tons.</p>
+        <p class="small">Full sheet (backup): <a href="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/edit">Cost and Emissions Analysis</a></p>
+      </section>
+
+      <!-- Summary + Conclusion -->
+      <section>
+        <h2>Summary + Conclusion</h2>
+        <p>Whitefish needs at least 6,000 kWh a month and cannot spend more than $200,000.</p>
+        <p class="fragment">The inequalities show every mix that works. Point (5, 1) is the best: 5 solar and 1 geothermal.</p>
+        <p class="fragment">That mix hits the budget, beats the energy goal by 1,000 kWh, keeps yearly upkeep around $4,500, and cuts emissions way below coal power.</p>
+        <p class="fragment"><b>Town Hall line:</b> This plan gives Whitefish clean power for winter and summer without going over budget.</p>
+      </section>
+
+      <!-- Sources -->
+      <section>
+        <h2>Sources</h2>
+        <ul style="text-align:left;">
+          <li class="small">Class project data (Whitefish cost and energy spreadsheet)</li>
+          <li class="small">U.S. EIA — How much CO₂ per kWh of U.S. electricity (faq id 74)</li>
+          <li class="small">Ember — US Electricity 2025 special report (grid ≈ 384 g CO₂/kWh in 2024)</li>
+          <li class="small">Alliance for Innovation and Infrastructure — 2024 Energy Spotlights (solar ≈ 43 g, geothermal ≈ 37 g CO₂e/kWh)</li>
+          <li class="small">reveal.js — presentation framework (revealjs.com)</li>
+        </ul>
+      </section>
+
+      <!-- Thank you -->
+      <section>
+        <h2>Thank you! Questions? 🌲</h2>
+        <p class="small">Green Cities · Powering Whitefish, Montana</p>
       </section>
 
     </div>
