@@ -14,16 +14,6 @@
   <link rel="stylesheet" href="deck.css">
 </head>
 <body>
-  <!-- PASSWORD GATE: covers the whole screen until the right password is entered (see gate.js) -->
-  <div id="gate">
-    <form id="gateForm" class="gate-box">
-      <p class="wip-tag">Green Cities · Powering Whitefish</p>
-      <h2>Enter the password</h2>
-      <input type="password" id="gateInput" placeholder="Password" autocomplete="off" autofocus>
-      <button type="submit">Enter</button>
-      <p id="gateError" class="gate-error" aria-live="polite"></p>
-    </form>
-  </div>
 
   <!-- Reveal looks for .reveal > .slides > section. Each <section> is one slide. -->
   <!-- Corner badge shown on every slide. It sits outside .reveal so it never scales or moves. -->
@@ -64,7 +54,7 @@
         <p class="fragment"><b>Also:</b> <code>x ≥ 0, y ≥ 0</code>, whole numbers only</p>
       </section>
 
-      <!-- SLIDE 4: Interactive planner (powered by planner.js) -->
+      <!-- SLIDE 4: Interactive planner -->
       <section id="planner-slide">
         <h2>Try It Yourself</h2>
         <div class="planner">
@@ -149,12 +139,13 @@
           <li class="small">Ember — US Electricity 2025 special report (grid ≈ 384 g CO₂/kWh in 2024)</li>
           <li class="small">Alliance for Innovation and Infrastructure — 2024 Energy Spotlights (solar ≈ 43 g, geothermal ≈ 37 g CO₂e/kWh)</li>
           <li class="small">reveal.js — presentation framework (revealjs.com)</li>
+          <li class="small">https://www.desmos.com/ - sheets and graphs</li>
         </ul>
       </section>
 
       <!-- Thank you -->
       <section>
-        <h2>Thank you! Questions? 🌲</h2>
+        <h2>Thank you! Questions?</h2>
         <p class="small">Green Cities · Powering Whitefish, Montana</p>
       </section>
 
