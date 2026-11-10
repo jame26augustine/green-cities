@@ -5,8 +5,8 @@
 // index.html calls when the planner slide is shown.
 
 // ----- 1. The numbers from the problem -----
-const SOLAR_COST = 30000;     // dollars per solar unit
-const SOLAR_ENERGY = 1100;    // kWh per month per solar unit
+const SOLAR_COST = 30000;     // dollars per solar system (10 kW)
+const SOLAR_ENERGY = 1100;    // kWh per month per solar system
 const GEO_COST = 50000;       // dollars per geothermal unit
 const GEO_ENERGY = 1500;      // kWh per month per geothermal unit
 const BUDGET = 200000;        // max dollars we can spend
@@ -25,7 +25,7 @@ function enoughEnergy(x, y) { return totalEnergy(x, y) >= ENERGY_GOAL; }
 function isFeasible(x, y)  { return inBudget(x, y) && enoughEnergy(x, y); }
 
 // ----- Graph colors (match the white + blue design in deck.css) -----
-// The canvas can't read CSS variables, so the colors live here too.
+// Fallbacks match Whitefish. readGraphColors() replaces them from CSS.
 const COLORS = {
   grid: "#e2e8f0",                       // faint grey grid lines on white
   axis: "#334155",                       // dark axes and numbers
@@ -107,7 +107,21 @@ function dot(x, y, radius, fill, outline) {
   if (outline) { ctx.strokeStyle = outline; ctx.lineWidth = 2; ctx.stroke(); }
 }
 
+function readGraphColors() {
+  const style = getComputedStyle(document.documentElement);
+  const pick = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+  COLORS.grid = pick("--graph-grid", "#e2e8f0");
+  COLORS.axis = pick("--graph-axis", "#334155");
+  COLORS.region = pick("--graph-region", "rgba(37, 99, 235, 0.18)");
+  COLORS.budget = pick("--graph-budget", "#dc2626");
+  COLORS.energy = pick("--graph-energy", "#d97706");
+  COLORS.point = pick("--graph-point", "#1e3a8a");
+  COLORS.current = pick("--graph-current", "#16a34a");
+  COLORS.outline = pick("--graph-outline", "#0b1f3a");
+}
+
 function drawGraph(curX, curY) {
+  readGraphColors();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Grid lines and numbers
@@ -123,7 +137,7 @@ function drawGraph(curX, curY) {
   }
   line(0, 0, MAX_UNITS, 0, COLORS.axis, 2);   // x-axis
   line(0, 0, 0, MAX_UNITS, COLORS.axis, 2);   // y-axis
-  ctx.fillText("x = solar units", canvas.width / 2 - 40, canvas.height - 12);
+  ctx.fillText("x = solar systems", canvas.width / 2 - 52, canvas.height - 12);
   ctx.save();
   ctx.translate(14, canvas.height / 2 + 50);
   ctx.rotate(-Math.PI / 2);
@@ -196,6 +210,10 @@ function startPlanner() {
     solarSlider.value = 5;
     geoSlider.value = 1;
     update();
+  });
+
+  document.addEventListener("deck-theme", function () {
+    if (started) update();
   });
 
   update();   // draw the first picture

@@ -1,51 +1,102 @@
 <!DOCTYPE html>
-<!-- class="locked" hides the deck until gate.js unlocks it -->
-<html lang="en" class="locked">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Green Cities: Powering Whitefish</title>
   <link rel="icon" href="data:,">  <!-- empty icon, so the browser does not ask for a missing favicon -->
+  <script>
+    // Apply a saved theme before the first paint. Defaults stay on Whitefish.
+    try {
+      var savedDeck = JSON.parse(localStorage.getItem("greenCitiesDeckSettings") || "{}");
+      if (savedDeck.theme) document.documentElement.dataset.theme = savedDeck.theme;
+      if (savedDeck.motion) document.documentElement.dataset.motion = savedDeck.motion;
+      if (savedDeck.mathHelp) document.documentElement.classList.add("math-help");
+    } catch (error) {}
+  </script>
   <!-- reveal.js is saved in the vendor/ folder, so the deck works with no internet -->
   <link rel="stylesheet" href="vendor/reset.css">
   <link rel="stylesheet" href="vendor/reveal.css">
-  <link rel="stylesheet" href="vendor/theme-white.css">  <!-- base theme; deck.css restyles it in blue -->
+  <link rel="stylesheet" href="vendor/theme-white.css">  <!-- base theme; deck.css restyles it -->
   <!-- Our own styles go last so they win over the theme -->
   <link rel="stylesheet" href="deck.css">
 </head>
 <body>
-
-  <!-- Reveal looks for .reveal > .slides > section. Each <section> is one slide. -->
   <!-- Corner badge shown on every slide. It sits outside .reveal so it never scales or moves. -->
   <div class="corner-badge">DRAFT</div>
 
+  <button type="button" id="settingsOpen" class="chrome-btn">Settings</button>
+  <button type="button" id="navToggle" class="chrome-btn" aria-expanded="false" aria-controls="sideNav">Slides</button>
+  <nav id="sideNav" class="scroll-panel" aria-label="Slides" data-prevent-swipe></nav>
+  <button type="button" id="scrollCue" hidden>Scroll down <span class="chev" aria-hidden="true">↓</span></button>
+  <p id="mathHelpBar" hidden>
+    <b>Layout:</b> x = 10 kW solar systems, y = geothermal units.
+    Budget <code>30000x + 50000y ≤ 200000</code>.
+    Energy <code>1100x + 1500y ≥ 6000</code>.
+    Recommended mix: 5 solar systems and 1 geothermal unit, $200,000, 7,000 kWh/month.
+  </p>
+  <div class="red-wash" aria-hidden="true"></div>
+
+  <dialog id="settingsDialog" aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle">Deck settings</h2>
+    <p>Whitefish keeps the original blue deck. Other choices change color or motion only. The inequalities stay the same.</p>
+    <label>Theme
+      <select id="themeSelect">
+        <option value="whitefish">Whitefish</option>
+        <option value="night">Night</option>
+        <option value="pine">Pine</option>
+        <option value="signal">Signal</option>
+      </select>
+    </label>
+    <label>Transition
+      <select id="transitionSelect">
+        <option value="slide">Slide</option>
+        <option value="fade">Fade</option>
+        <option value="red-fade">Red fade</option>
+        <option value="none">None</option>
+      </select>
+    </label>
+    <label>Motion
+      <select id="motionSelect">
+        <option value="system">Match this device</option>
+        <option value="reduce">Reduce motion</option>
+        <option value="allow">Allow motion</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" id="mathHelp"> Show math layout help</label>
+    <button type="button" id="settingsClose" data-close>Close</button>
+  </dialog>
+
+  <dialog id="lightbox" aria-label="Enlarged image">
+    <button type="button" id="lightboxClose" data-close>Close</button>
+    <img id="lightboxImg" alt="">
+  </dialog>
+
+  <!-- Reveal looks for .reveal > .slides > section. Each <section> is one slide.
+       A section that contains sections is a horizontal slide with vertical slides under it. -->
   <div class="reveal">
     <div class="slides">
 
-      <!-- SLIDE 1: Title -->
-      <section class="title-slide">
-        <!-- Small "draft" tag so viewers know this isn't finished -->
+      <section class="title-slide" data-title="Title">
         <p class="wip-tag">Draft · Working on it</p>
         <h1>Green Cities ❄ 𖤓</h1>
         <h3>Powering Whitefish, Montana</h3>
         <p>Solar + geothermal energy with a system of linear inequalities</p>
-        <p class="small">James A· Algebra · press → or Space to continue</p>
+        <p class="small">James A· Algebra · ← → change sections · ↓ or scroll moves down a stack</p>
       </section>
 
-      <!-- SLIDE 2: Problem and variables -->
-      <section>
+      <section data-title="Problem">
         <h2>The Problem</h2>
-        <p>Whitefish wants clean power for a neighborhood grid. How many of each unit should it buy?</p>
+        <p>Whitefish wants clean power for a neighborhood grid. How many solar systems and geothermal units should it buy?</p>
         <table>
           <tr><th>Variable</th><th>Unit</th><th>Cost</th><th>Energy</th></tr>
-          <tr><td><b>x</b></td><td>Solar</td><td>$30,000</td><td>1,100 kWh/mo</td></tr>
-          <tr><td><b>y</b></td><td>Geothermal</td><td>$50,000</td><td>1,500 kWh/mo</td></tr>
+          <tr><td><b>x</b></td><td>Solar system, 10 kW</td><td>$30,000</td><td>1,100 kWh/mo</td></tr>
+          <tr><td><b>y</b></td><td>Geothermal unit</td><td>$50,000</td><td>1,500 kWh/mo</td></tr>
         </table>
-        <p class="small">Budget: $200,000 · Goal: at least 6,000 kWh/month</p>
+        <p class="small">x is one solar system, not one panel. Budget: $200,000 · Goal: at least 6,000 kWh/month</p>
       </section>
 
-      <!-- SLIDE 3: The inequalities -->
-      <section>
+      <section data-title="Inequalities">
         <h2>The Inequalities</h2>
         <p class="fragment"><b>Budget:</b> <code>30000x + 50000y ≤ 200000</code><br>
           <span class="small">spend no more than $200k</span></p>
@@ -54,29 +105,29 @@
         <p class="fragment"><b>Also:</b> <code>x ≥ 0, y ≥ 0</code>, whole numbers only</p>
       </section>
 
-      <!-- SLIDE 4: Interactive planner -->
-      <section id="planner-slide">
+      <section id="planner-slide" data-title="Try it">
         <h2>Try It Yourself</h2>
         <div class="planner">
           <div class="panel">
-            <label>Solar (x): <span id="solarValue">5</span>
+            <label>Solar systems (x): <span id="solarValue">5</span>
               <input type="range" id="solarSlider" min="0" max="7" value="5"></label>
-            <label>Geothermal (y): <span id="geoValue">1</span>
+            <label>Geothermal units (y): <span id="geoValue">1</span>
               <input type="range" id="geoSlider" min="0" max="7" value="1"></label>
             <p>Cost: <span id="costText">$200,000</span> / $200,000</p>
             <div class="bar"><div id="costBar" class="fill"></div></div>
             <p>Energy: <span id="energyText">7,000</span> / 6,000 kWh</p>
             <div class="bar"><div id="energyBar" class="fill"></div></div>
             <p>Status: <span id="badge" class="badge">✓ Feasible</span></p>
-            <button id="recommendBtn">Recommended: 5 solar + 1 geothermal</button>
+            <button type="button" id="recommendBtn">Recommended: 5 solar systems + 1 geothermal</button>
+            <p class="small">Each solar system is 10 kW. The sliders do not count single panels.</p>
           </div>
           <canvas id="graph" width="500" height="500"></canvas>
         </div>
       </section>
 
-      <!-- Mixes Compared -->
-      <section>
+      <section data-title="Mixes">
         <h2>Mixes Compared</h2>
+        <p class="small">x = solar systems (10 kW each). y = geothermal units.</p>
         <table class="mixes">
           <tr><th>Mix (x, y)</th><th>Cost</th><th>Energy</th><th>Result</th></tr>
           <tr><td>(6, 0)</td><td>$180,000</td><td>6,600</td><td class="ok">Feasible</td></tr>
@@ -88,9 +139,8 @@
         </table>
       </section>
 
-      <!-- Recommendation -->
-      <section>
-        <h2>Recommendation: 5 Solar + 1 Geothermal</h2>
+      <section data-title="Recommendation">
+        <h2>Recommendation: 5 Solar Systems + 1 Geothermal</h2>
         <p><b>$200,000</b> · <b>7,000 kWh/month</b></p>
         <ul>
           <li class="fragment">Most energy of any feasible mix, 1,000 kWh over the goal</li>
@@ -99,39 +149,63 @@
         </ul>
       </section>
 
-      <!-- Design Map -->
-      <section>
+      <section data-title="Design map">
         <h2>Design Map · Whitefish Grid</h2>
-        <img src="images/design-map.png" alt="Flow from 5 solar and 1 geothermal into the neighborhood grid" style="max-height:420px; width:auto;">
-        <p class="small">5 solar units and 1 geothermal unit feed the neighborhood loads.</p>
+        <button type="button" class="zoom-hit" id="designMapZoom" aria-label="Enlarge the design map">
+          <img src="images/design-map.png" alt="Whitefish Green Energy Grid diagram with 5 solar, 1 geothermal, and the neighborhood">
+        </button>
+        <p class="small">5 solar systems (10 kW each) and 1 geothermal unit feed the neighborhood loads. The map artwork says “panels”; each solar box is one system, not one panel.</p>
       </section>
 
-      <!-- Spreadsheet Analysis -->
-      <section>
-        <h2>Spreadsheet Analysis</h2>
-        <table class="mixes">
-          <tr><th>Item</th><th>Amount</th></tr>
-          <tr><td>Solar install (5 × $30,000)</td><td>$150,000</td></tr>
-          <tr><td>Geothermal install (1 × $50,000)</td><td>$50,000</td></tr>
-          <tr class="best"><td>Total install</td><td>$200,000</td></tr>
-          <tr><td>Est. yearly maintenance (2% solar + 3% geo)</td><td>$4,500</td></tr>
-          <tr><td>Monthly energy</td><td>7,000 kWh</td></tr>
-        </table>
-        <p class="small fragment">Lifecycle emissions ≈ 42 g CO₂e/kWh for this mix vs ≈ 820 g for coal. Same 7,000 kWh from coal ≈ 5.7 tons CO₂e; this mix ≈ 0.3 tons.</p>
-        <p class="small">Full sheet (backup): <a href="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/edit">Cost and Emissions Analysis</a></p>
+      <!-- Vertical stack: Google Sheet, then the backup slot, then the totals. -->
+      <section data-title="Sheet">
+        <section data-title="Google Sheet" id="sheet-slide">
+          <h2>Google Sheet</h2>
+          <p class="small">Full sheet: <a href="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/edit">Cost and Emissions Analysis</a></p>
+          <div class="sheet-frame scroll-panel" data-prevent-swipe>
+            <iframe title="Cost and Emissions Analysis spreadsheet" src="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/preview"></iframe>
+          </div>
+          <p class="small">If the frame asks you to sign in, use the link above. Scrolling inside the frame stays in the sheet. The backup screenshot is the next slide down.</p>
+        </section>
+
+        <section data-title="Backup" id="backup-slide">
+          <h2>Backup screenshot</h2>
+          <p class="small">A still image of the sheet, for when the live Google Sheet does not load.</p>
+          <div id="backupSlot">
+            <button type="button" class="zoom-hit" id="backupZoom" hidden aria-label="Enlarge the backup screenshot">
+              <img id="backupImg" alt="Backup screenshot of the Cost and Emissions spreadsheet" src="images/sheet-backup.png">
+            </button>
+            <div id="backupEmpty" class="shot-empty">
+              <p><strong>Empty screenshot slot</strong></p>
+              <p>No backup image is in the repo yet. This box is not a made-up picture of the sheet.</p>
+              <p>Save James's screenshot as <code>images/sheet-backup.png</code> (next to the design map) and reload.</p>
+            </div>
+          </div>
+        </section>
+
+        <section data-title="Totals" id="totals-slide">
+          <h2>Spreadsheet Analysis</h2>
+          <table class="mixes">
+            <tr><th>Item</th><th>Amount</th></tr>
+            <tr><td>Solar install (5 × $30,000)</td><td>$150,000</td></tr>
+            <tr><td>Geothermal install (1 × $50,000)</td><td>$50,000</td></tr>
+            <tr class="best"><td>Total install</td><td>$200,000</td></tr>
+            <tr><td>Est. yearly maintenance (2% solar + 3% geo)</td><td>$4,500</td></tr>
+            <tr><td>Monthly energy</td><td>7,000 kWh</td></tr>
+          </table>
+          <p class="small fragment">Lifecycle emissions ≈ 42 g CO₂e/kWh for this mix vs ≈ 820 g for coal. Same 7,000 kWh from coal ≈ 5.7 tons CO₂e; this mix ≈ 0.3 tons.</p>
+        </section>
       </section>
 
-      <!-- Summary + Conclusion -->
-      <section>
+      <section data-title="Summary">
         <h2>Summary + Conclusion</h2>
         <p>Whitefish needs at least 6,000 kWh a month and cannot spend more than $200,000.</p>
-        <p class="fragment">The inequalities show every mix that works. Point (5, 1) is the best: 5 solar and 1 geothermal.</p>
+        <p class="fragment">The inequalities show every mix that works. Point (5, 1) is the best: 5 solar systems and 1 geothermal.</p>
         <p class="fragment">That mix hits the budget, beats the energy goal by 1,000 kWh, keeps yearly upkeep around $4,500, and cuts emissions way below coal power.</p>
         <p class="fragment"><b>Town Hall line:</b> This plan gives Whitefish clean power for winter and summer without going over budget.</p>
       </section>
 
-      <!-- Sources -->
-      <section>
+      <section data-title="Sources">
         <h2>Sources</h2>
         <ul style="text-align:left;">
           <li class="small">Class project data (Whitefish cost and energy spreadsheet)</li>
@@ -143,32 +217,128 @@
         </ul>
       </section>
 
-      <!-- Thank you -->
-      <section>
-        <h2>Thank you! Questions?</h2>
-        <p class="small">Green Cities · Powering Whitefish, Montana</p>
+      <!-- Far-right stack: thank you, then the code appendix underneath. -->
+      <section data-title="Thanks">
+        <section data-title="Thank you" id="thanks-slide">
+          <h2>Thank you! Questions?</h2>
+          <p class="small">Green Cities · Powering Whitefish, Montana</p>
+          <p class="small">Scroll down for the code appendix. The samples are copied from this repo.</p>
+        </section>
+
+        <section data-title="Code: math" id="code-math">
+          <h2>Code: the inequalities</h2>
+          <p class="small">Copied from <code>planner.js</code>. x is how many 10 kW solar systems. y is geothermal units. Cost and energy use these constants; the button only picks 5 and 1.</p>
+          <div class="code-panel scroll-panel" data-prevent-swipe>
+            <pre><code>const SOLAR_COST = 30000;     // dollars per solar system (10 kW)
+const SOLAR_ENERGY = 1100;    // kWh per month per solar system
+const GEO_COST = 50000;       // dollars per geothermal unit
+const GEO_ENERGY = 1500;      // kWh per month per geothermal unit
+const BUDGET = 200000;        // max dollars we can spend
+const ENERGY_GOAL = 6000;     // min kWh per month we need
+
+function totalCost(x, y)   { return SOLAR_COST * x + GEO_COST * y; }
+function totalEnergy(x, y) { return SOLAR_ENERGY * x + GEO_ENERGY * y; }
+
+// Budget: 30000x + 50000y ≤ 200000
+function inBudget(x, y)    { return totalCost(x, y) &lt;= BUDGET; }
+// Energy: 1100x + 1500y ≥ 6000
+function enoughEnergy(x, y) { return totalEnergy(x, y) &gt;= ENERGY_GOAL; }
+function isFeasible(x, y)  { return inBudget(x, y) &amp;&amp; enoughEnergy(x, y); }
+
+recommendBtn.addEventListener("click", function () {
+  solarSlider.value = 5;
+  geoSlider.value = 1;
+  update();
+});</code></pre>
+          </div>
+        </section>
+
+        <section data-title="Code: graph" id="code-graph">
+          <h2>Code: the graph lines</h2>
+          <p class="small">Copied from <code>drawGraph</code> in <code>planner.js</code>. The comment in the file states the intercepts. Same constants, so the picture matches the inequalities.</p>
+          <div class="code-panel scroll-panel" data-prevent-swipe>
+            <pre><code>// Budget line: 30000x + 50000y = 200000 -&gt; (0, 4) to (6.67, 0)
+line(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, COLORS.budget, 2);
+// Energy line: 1100x + 1500y = 6000 -&gt; (0, 4) to (5.45, 0)
+line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 2);</code></pre>
+          </div>
+        </section>
+
+        <section data-title="Code: stacks" id="code-stacks">
+          <h2>Code: stacks and the wheel</h2>
+          <p class="small">Copied from <code>decideWheel</code> in <code>deck-nav.js</code>. A vertical scroll moves inside the stack. It does not skip sideways. A sideways scroll changes sections. Scrolling a code box or the Google Sheet is left alone.</p>
+          <div class="code-panel scroll-panel" data-prevent-swipe>
+            <pre><code>function decideWheel(input) {
+  if (!input || input.uiOpen || input.scrollable) return "ignore";
+  var deltaX = input.deltaX || 0;
+  var deltaY = input.deltaY || 0;
+  var routes = input.routes || {};
+  var absX = Math.abs(deltaX);
+  var absY = Math.abs(deltaY);
+  if (Math.max(absX, absY) &lt; WHEEL_THRESHOLD) return "ignore";
+  // Vertical wheel moves down or up inside the current stack.
+  // It does not jump to the next horizontal section.
+  if (absY &gt;= absX) {
+    if (deltaY &gt; 0 &amp;&amp; routes.down) return "down";
+    if (deltaY &lt; 0 &amp;&amp; routes.up) return "up";
+    return "ignore";
+  }
+  if (deltaX &gt; 0 &amp;&amp; routes.right) return "right";
+  if (deltaX &lt; 0 &amp;&amp; routes.left) return "left";
+  return "ignore";
+}</code></pre>
+          </div>
+        </section>
       </section>
 
     </div>
   </div>
 
-  <!-- Load reveal.js first, then our planner code, then start the deck -->
   <script src="vendor/reveal.js"></script>
   <script src="planner.js"></script>
+  <script src="deck-nav.js"></script>
+  <script src="deck-ui.js"></script>
   <script>
-    // Start the presentation. hash:true puts the slide number in the URL.
-    // keyboard:false means arrow keys do nothing yet; gate.js turns
-    // the keyboard back on after the password is correct.
-    Reveal.initialize({ hash: true, width: 1200, height: 700, keyboard: false });
+    // hash:true puts the slide address in the URL, including vertical slides (#/7/1).
+    // mouseWheel stays off here; deck-ui.js handles the wheel so stacks and
+    // scrolling panels do not fight.
+    Reveal.initialize({
+      hash: true,
+      width: 1200,
+      height: 700,
+      margin: 0.06,
+      controls: true,
+      controlsLayout: "edges",
+      controlsBackArrows: "visible",
+      navigationMode: "default",
+      scrollActivationWidth: 0,
+      touch: true,
+      keyboard: true,
+      keyboardCondition: function () {
+        return !document.documentElement.classList.contains("ui-open");
+      },
+      mouseWheel: false,
+      transition: "slide",
+      transitionSpeed: "fast",
+      slideNumber: function (slide) {
+        const index = Reveal.getIndices(slide);
+        const past = Reveal.getSlidePastCount(slide) + 1;
+        const total = Reveal.getTotalSlides();
+        const label = Reveal.isVerticalSlide(slide)
+          ? (index.h + 1) + "." + (index.v + 1)
+          : String(index.h + 1);
+        return [label + " · " + past + "/" + total];
+      }
+    });
 
-    // Set up the planner once when its slide is first shown.
     function maybeStartPlanner() {
-      if (Reveal.getCurrentSlide().id === "planner-slide") startPlanner();
+      if (Reveal.getCurrentSlide() && Reveal.getCurrentSlide().id === "planner-slide") startPlanner();
     }
-    Reveal.on("ready", maybeStartPlanner);       // in case we open on that slide
-    Reveal.on("slidechanged", maybeStartPlanner); // when we arrive at it
+    Reveal.on("ready", function () {
+      DeckUI.mount();
+      maybeStartPlanner();
+    });
+    Reveal.on("slidechanged", maybeStartPlanner);
   </script>
-  <!-- The password gate goes last, after Reveal has started -->
-  <script src="gate.js"></script>
 </body>
 </html>
