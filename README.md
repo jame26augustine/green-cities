@@ -1,15 +1,32 @@
 # Green Cities: Powering Whitefish (Reveal.js deck)
 
 ## Open it
-Double-click `index.html`. Use the arrow keys or Space to move between slides. Press `F` for fullscreen and `Esc` for a slide overview.
-reveal.js 6.0.2 is saved in `vendor/`, so the deck works without internet.
+Double-click `index.html`. No sign-in screen: a link such as `#/7/1` opens that slide directly.
+reveal.js 6.0.2 is saved in `vendor/`, so the deck works without internet. The live Google Sheet frame needs a connection; the totals slide does not.
+
+## Moving around
+- `←` and `→` change sections, including the last section, which continues downward.
+- `↓`, the Scroll down button, a vertical swipe, and the mouse wheel move down inside a stack. They do not skip to the next section.
+- Space and `N` move forward, including down a stack, and then on to the next section.
+- The left-hand list jumps to any section. Slide numbers sit at the lower right (`8.2 · 12/16`).
+- Scrolling inside a code box stays in that box. Scrolling inside the Google Sheet stays in the sheet.
+- Click or tap a picture to enlarge it. Close with Escape, the Close button, or the dark backdrop.
+- Settings (top left) stores the theme, transition, motion, and math-layout help in this browser.
+
+## Backup screenshot
+The Sheet → Backup slide is an empty slot until a real screenshot is added. Save that file as `images/sheet-backup.png` and reload. Do not drop in a different filename.
 
 ## Files
-- `index.html` has the slides (each `<section>` is one slide) and starts Reveal
-- `deck.css` holds the blue design (colors are CSS variables at the top) and the planner layout
-- `planner.js` is the interactive slide (same math and graph code as the starter site)
-- `drafts/later-slides.html` holds finished slides that aren't in the deck yet (copy a `<section>` back into index.html to use it)
+- `index.html` has the slides. A section inside a section is a vertical stack.
+- `deck.css` holds the Whitefish colors, the Night, Pine, and Signal themes, and the planner layout
+- `planner.js` is the interactive slide (same cost and energy math as the starter site)
+- `deck-nav.js` decides whether a wheel event changes slides
+- `deck-ui.js` builds the side list, settings, lightbox, and scroll cue
+- `drafts/later-slides.html` is an old unused copy. The live deck does not load it.
 - `vendor/` contains the reveal.js library files (MIT license)
+
+## Checks
+`npm test` runs the file checks. `npm run test:browser` opens the deck in Chrome and clicks through navigation, settings, and the lightbox.
 
 ## Host it free on GitHub Pages
 1. Create a public repo named `green-cities` on github.com.
