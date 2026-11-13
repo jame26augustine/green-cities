@@ -164,7 +164,9 @@ function drawGraph(curX, curY) {
   ctx.fillStyle = COLORS.budget;
   ctx.fillText("Budget line", ...offset(toPx(5.2, 1.3)));
   ctx.fillStyle = COLORS.energy;
-  ctx.fillText("Energy line", ...offset(toPx(1.2, 2.6), -80));
+  // Keep the words in the open space under the energy line.
+  // Farther right, the line drops and would run through the text.
+  ctx.fillText("Energy line", ...offset(toPx(1.55, 0.9), 0));
 
   // Dots for every whole-number feasible mix
   for (let x = 0; x <= MAX_UNITS; x++) {
