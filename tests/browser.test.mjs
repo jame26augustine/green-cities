@@ -46,17 +46,28 @@ const boot = await page.evaluate(() => ({
   keyboard: Reveal.getConfig().keyboard,
   touch: Reveal.getConfig().touch,
   number: document.querySelector(".slide-number")?.innerText || "",
-  navButtons: document.querySelectorAll("#sideNav button").length
+  sideNav: document.querySelectorAll("#sideNav, #navToggle").length,
+  draftLabels: document.querySelectorAll(".corner-badge, .wip-tag").length,
+  revealLeft: document.querySelector(".reveal").getBoundingClientRect().left,
+  lightboxCloseHit: document.elementFromPoint(1400, 30)?.id === "lightboxClose"
 }));
 check("deck is visible without a gate", !boot.locked && !boot.gate && boot.visible !== "hidden", JSON.stringify(boot));
 check("keyboard and touch are on", boot.keyboard === true && boot.touch === true, JSON.stringify(boot));
 check("slide number is visible", /\d+\s*·\s*\d+\/\d+/.test(boot.number), boot.number);
-check("side navigation has buttons", boot.navButtons >= 11, String(boot.navButtons));
+check("sidebar and draft labels are absent", boot.sideNav === 0 && boot.draftLabels === 0, JSON.stringify(boot));
+check("slides are not shifted aside for a side list", boot.revealLeft < 40, JSON.stringify(boot));
+check("lightbox close stays off the slides until an image opens", boot.lightboxCloseHit === false, JSON.stringify(boot));
 
-await page.click('#sideNav button[aria-label^="8."]');
-await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "sheet-slide");
+await page.keyboard.press("ArrowRight");
+await page.waitForFunction(() => /The Problem/.test(Reveal.getCurrentSlide()?.innerText || ""));
+check("right arrow opens the next section", true);
+await page.click(".navigate-right");
+await page.waitForFunction(() => /The Inequalities/.test(Reveal.getCurrentSlide()?.innerText || ""));
+check("on-screen arrow opens the next section", true);
+
+await go(page, "sheet-slide");
 const sheet = await indices(page);
-check("side list opens the Google Sheet", sheet.v === 0, JSON.stringify(sheet));
+check("google sheet slide is reachable", sheet.v === 0, JSON.stringify(sheet));
 const cueOnSheet = await page.$eval("#scrollCue", (el) => !el.hidden);
 check("scroll cue shows when a stack continues", cueOnSheet);
 
@@ -209,17 +220,16 @@ await phone.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: tru
 await phone.goto(url, { waitUntil: "domcontentloaded" });
 await phone.waitForFunction(() => window.Reveal && Reveal.isReady());
 const phoneBoot = await phone.evaluate(() => ({
-  toggle: getComputedStyle(document.getElementById("navToggle")).display,
+  toggle: !!document.getElementById("navToggle"),
+  sideNav: !!document.getElementById("sideNav"),
   narrow: document.body.classList.contains("nav-narrow"),
+  settings: getComputedStyle(document.getElementById("settingsOpen")).display,
   heading: document.querySelector(".present h1, .present h2")?.innerText || ""
 }));
-check("phone shows the slide list button", phoneBoot.narrow && phoneBoot.toggle !== "none", JSON.stringify(phoneBoot));
-await phone.click("#navToggle");
-const opened = await phone.$eval("#sideNav", (el) => el.classList.contains("open"));
-check("phone slide list opens", opened);
-await phone.click('#sideNav button[aria-label^="2."]');
+check("phone has no slide-list control", phoneBoot.toggle === false && phoneBoot.sideNav === false && phoneBoot.narrow === false && phoneBoot.settings !== "none", JSON.stringify(phoneBoot));
+await phone.keyboard.press("ArrowRight");
 await phone.waitForFunction(() => /Problem/.test(Reveal.getCurrentSlide()?.innerText || ""));
-check("phone slide list is clickable", true);
+check("phone arrow key still changes sections", true);
 
 const session = await phone.createCDPSession();
 await phone.evaluate(() => Reveal.slide(Reveal.getIndices(document.getElementById("sheet-slide")).h, 0));

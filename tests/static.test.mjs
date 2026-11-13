@@ -81,12 +81,33 @@ test("wheel stays inside a stack and leaves scrollable panels alone", () => {
   assert.equal(decideWheel({ deltaY: 8, deltaX: 2, routes }), "ignore");
 });
 
+test("draft material and the side list are gone", () => {
+  const html = read("index.html");
+  const css = read("deck.css");
+  const ui = read("deck-ui.js");
+  const readme = read("README.md");
+  for (const text of [html, css, ui, readme, read("planner.js"), read("deck-nav.js")]) {
+    assert.doesNotMatch(text, /id="sideNav"/);
+    assert.doesNotMatch(text, /id="navToggle"/);
+    assert.doesNotMatch(text, /buildSideNav/);
+    assert.doesNotMatch(text, /corner-badge/);
+    assert.doesNotMatch(text, /wip-tag/);
+    assert.doesNotMatch(text, /coming-soon/);
+    assert.doesNotMatch(text, /drafts\//);
+    assert.doesNotMatch(text, />DRAFT</);
+  }
+  assert.equal(fs.existsSync(path.join(root, "drafts")), false);
+  assert.equal(fs.existsSync(path.join(root, "drafts", "later-slides.html")), false);
+  assert.match(html, /id="scrollCue"/);
+  assert.match(html, /id="settingsOpen"/);
+  assert.match(html, /controls:\s*true/);
+});
+
 test("themes, lightbox, slide numbers, and direct-link settings exist", () => {
   const html = read("index.html");
   const css = read("deck.css");
   assert.match(html, /id="settingsDialog"/);
   assert.match(html, /id="lightbox"/);
-  assert.match(html, /id="sideNav"/);
   assert.match(html, /id="scrollCue"/);
   assert.match(html, /keyboard:\s*true/);
   assert.match(html, /hash:\s*true/);
