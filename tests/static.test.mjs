@@ -46,19 +46,20 @@ test("school math is unchanged and solar means systems", () => {
   assert.doesNotMatch(html, /5 panels|solar panels/i);
 });
 
-test("sheet stack, empty backup slot, and real code excerpts", () => {
+test("sheet stack, solution check, and real code excerpts", () => {
   const html = read("index.html");
   const planner = read("planner.js");
   const nav = read("deck-nav.js");
   assert.match(html, /id="sheet-slide"/);
-  assert.match(html, /id="backup-slide"/);
   assert.match(html, /id="totals-slide"/);
   assert.match(html, /id="thanks-slide"/);
-  assert.match(html, /docs\.google\.com\/spreadsheets\/d\/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw\/edit/);
-  assert.match(html, /images\/sheet-backup\.png/);
-  assert.match(html, /Empty screenshot slot/);
+  assert.doesNotMatch(html, /id="backup-slide"/);
+  assert.doesNotMatch(html, /sheet-backup/);
+  assert.doesNotMatch(html, /Empty screenshot slot/);
+  assert.doesNotMatch(read("deck-ui.js"), /backupImg/);
   assert.equal(fs.existsSync(path.join(root, "images", "sheet-backup.png")), false);
   assert.equal(fs.existsSync(path.join(root, "images", "design-map.png")), true);
+  assert.match(html, /docs\.google\.com\/spreadsheets\/d\/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw\/edit/);
   assert.match(html, /https:\/\/www\.desmos\.com\/ - sheets and graphs/);
   assert.match(html, /function decideWheel\(input\)/);
   assert.match(nav, /function decideWheel\(input\)/);
@@ -67,6 +68,30 @@ test("sheet stack, empty backup slot, and real code excerpts", () => {
   assert.match(planner, /function inBudget\(x, y\)/);
   assert.match(html, /BUDGET \/ SOLAR_COST/);
   assert.match(planner, /BUDGET \/ SOLAR_COST/);
+});
+
+test("rubric lines are visible and the coal number is corrected", () => {
+  const html = read("index.html");
+  const planner = read("planner.js");
+  assert.doesNotMatch(html, /class="fragment"><b>Budget:/);
+  assert.match(html, /x ≥ 0/);
+  assert.match(html, /whole numbers/);
+  assert.match(html, /5 × 1,100 \+ 1 × 1,500 = 7,000 kWh/);
+  assert.match(html, /30,000 × 5 \+ 50,000 × 1 = 200,000/);
+  assert.match(html, /1,100 × 5 \+ 1,500 × 1 = 7,000/);
+  assert.match(html, /The blue shade meets both inequalities/);
+  assert.match(html, /\(6, 0\) also works/);
+  assert.match(html, /\$20,000 less/);
+  assert.match(html, /5,500 × 43 \+ 1,500 × 37/);
+  assert.match(html, /7,000 × 42 g = 294,000 g/);
+  assert.match(html, /2\.31 lb/);
+  assert.match(html, /7,000 × 2\.31 lb = 16,170 lb/);
+  assert.match(html, /about 7\.3 metric tons/);
+  assert.doesNotMatch(html, /820/);
+  assert.doesNotMatch(html, /4,500/);
+  assert.doesNotMatch(html, /2% solar/);
+  assert.doesNotMatch(planner, /toPx\(1\.2, 2\.6\), -80/);
+  assert.match(planner, /toPx\(1\.55, 0\.9\)/);
 });
 
 test("wheel stays inside a stack and leaves scrollable panels alone", () => {

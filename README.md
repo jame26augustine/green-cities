@@ -8,13 +8,10 @@ reveal.js 6.0.2 is saved in `vendor/`, so the deck works without internet. The l
 - `←` and `→` change sections, including the last section, which continues downward.
 - `↓`, the Scroll down button, a vertical swipe, and the mouse wheel move down inside a stack. They do not skip to the next section.
 - Space and `N` move forward, including down a stack, and then on to the next section.
-- Slide numbers sit at the lower right (`8.2 · 12/16`).
+- Slide numbers sit at the lower right (`8.2 · 9/15`).
 - Scrolling inside a code box stays in that box. Scrolling inside the Google Sheet stays in the sheet.
 - Click or tap a picture to enlarge it. Close with Escape, the Close button, or the dark backdrop.
 - Settings (top left) stores the theme, transition, motion, and math-layout help in this browser.
-
-## Backup screenshot
-The Sheet → Backup slide is an empty slot until a real screenshot is added. Save that file as `images/sheet-backup.png` and reload. Do not drop in a different filename.
 
 ## Files
 - `index.html` has the slides. A section inside a section is a vertical stack.

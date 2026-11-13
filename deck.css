@@ -271,7 +271,7 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none; }
 
 html.math-help #scrollCue { bottom: 92px; }
 
-/* ----- 8. Sheets, backup slot, code, lightbox ----- */
+/* ----- 8. Sheets, code, lightbox ----- */
 .sheet-frame {
   height: 420px;
   overflow: hidden;
@@ -280,17 +280,6 @@ html.math-help #scrollCue { bottom: 92px; }
   background: #fff;
 }
 .sheet-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-.shot-empty {
-  min-height: 200px;
-  margin-top: 8px;
-  padding: 24px 28px;
-  border: 2px dashed var(--blue);
-  border-radius: 16px;
-  background: var(--panel);
-  text-align: left;
-}
-.shot-empty strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 1.15em; }
 
 .zoom-hit {
   background: transparent;

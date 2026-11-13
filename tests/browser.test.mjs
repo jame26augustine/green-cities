@@ -72,10 +72,10 @@ const cueOnSheet = await page.$eval("#scrollCue", (el) => !el.hidden);
 check("scroll cue shows when a stack continues", cueOnSheet);
 
 await page.keyboard.press("ArrowDown");
-await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "backup-slide");
-const backupText = await page.$eval("#backupEmpty", (el) => el.hidden ? "" : el.innerText);
-check("down enters the backup slide", true);
-check("backup slot is an empty labeled slot", /Empty screenshot slot/.test(backupText), backupText.slice(0, 80));
+await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "totals-slide");
+const totalsText = await page.$eval("#totals-slide", (el) => el.innerText);
+check("down enters the solution check", /5 × 1,100 \+ 1 × 1,500 = 7,000 kWh/.test(totalsText), totalsText.slice(0, 120));
+check("both inequalities are checked at (5, 1)", /200,000 ≤ 200,000/.test(totalsText) && /7,000 ≥ 6,000/.test(totalsText), totalsText.slice(0, 240));
 
 const beforeRight = await indices(page);
 await page.keyboard.press("ArrowRight");
@@ -123,19 +123,19 @@ const heading = await page.$eval("#sheet-slide h2", (el) => {
 });
 await page.mouse.move(heading.x, heading.y);
 await page.mouse.wheel({ deltaY: 160 });
-await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "backup-slide");
+await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "totals-slide");
 check("wheel down moves to the next slide in the stack", true);
 
-await page.waitForFunction(() => location.hash.includes("backup-slide"));
+await page.waitForFunction(() => location.hash.includes("totals-slide"));
 const hash = await page.evaluate(() => location.hash);
 await page.goto(url.split("#")[0] + "#/7/1", { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.Reveal && Reveal.isReady());
-await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "backup-slide");
-check("numeric hash opens the backup slide", true, hash);
+await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "totals-slide");
+check("numeric hash opens the solution check", true, hash);
 await page.goto(url.split("#")[0] + hash, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.Reveal && Reveal.isReady());
-await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "backup-slide");
-check("id hash opens the backup slide again", true, hash);
+await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "totals-slide");
+check("id hash opens the solution check again", true, hash);
 
 await page.click("#settingsOpen");
 await page.waitForSelector("#settingsDialog[open]");
@@ -243,7 +243,7 @@ await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints:
 await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 await new Promise((r) => setTimeout(r, 400));
 const touched = await phone.evaluate(() => Reveal.getCurrentSlide()?.id);
-check("swipe up moves down the sheet stack", touched === "backup-slide", touched);
+check("swipe up moves down the sheet stack", touched === "totals-slide", touched);
 
 await browser.close();
 if (failures.length) {

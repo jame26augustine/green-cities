@@ -139,28 +139,6 @@
     });
   }
 
-  function setupBackup() {
-    var img = document.getElementById("backupImg");
-    var zoom = document.getElementById("backupZoom");
-    var empty = document.getElementById("backupEmpty");
-    if (!img || !zoom || !empty) return;
-    function showImage() {
-      if (img.naturalWidth > 0) {
-        zoom.hidden = false;
-        empty.hidden = true;
-      } else {
-        showEmpty();
-      }
-    }
-    function showEmpty() {
-      zoom.hidden = true;
-      empty.hidden = false;
-    }
-    img.addEventListener("load", showImage);
-    img.addEventListener("error", showEmpty);
-    if (img.complete) showImage();
-  }
-
   function setupLightbox() {
     var dialog = document.getElementById("lightbox");
     var view = document.getElementById("lightboxImg");
@@ -220,7 +198,6 @@
   function mount() {
     var settings = load();
     apply(settings);
-    setupBackup();
     setupLightbox();
     setupSettings(settings);
     updateCue();
