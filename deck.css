@@ -20,7 +20,7 @@
 
   /* Status colors: kept different from each other on purpose,
      and dark enough to read on a white background */
-  --ok:    #16a34a;   /* Feasible: green check */
+  --ok:    #16a34a;   /* Great: green */
   --over:  #dc2626;   /* Over budget: red */
   --short: #d97706;   /* Not enough energy: amber */
 
@@ -68,41 +68,12 @@ body, .reveal-viewport { background: var(--bg); }
 .reveal table th { color: var(--sky); border-bottom: 2px solid var(--blue); }
 .reveal table td { border-bottom: 1px solid var(--border); }
 
-/* ----- 4. Title and "coming soon" slides: centered ----- */
-.reveal .slides section.title-slide,
-.reveal .slides section.coming-soon { text-align: center; }
+/* ----- 4. Title slide: centered ----- */
+.reveal .slides section.title-slide { text-align: center; }
 .reveal .title-slide h1 { color: var(--navy); font-size: 2.6em; }
 .reveal .title-slide h3 { color: var(--blue); font-weight: 400; }
-.reveal .coming-soon h2 { border: none; padding: 0; color: var(--blue); }
 
-/* ----- 5. Work-in-progress labels ----- */
-/* The pill-shaped tag on the title and last slides */
-.reveal .wip-tag {
-  display: inline-block;
-  font-size: 0.45em;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--short);
-  border: 1px dashed var(--short);
-  border-radius: 999px;
-  padding: 4px 16px;
-}
-/* The small badge pinned to the top-right corner of the screen */
-.corner-badge {
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 50;
-  font: 600 12px/1 system-ui, sans-serif;
-  letter-spacing: 0.15em;
-  color: #ffffff;
-  background: var(--short);
-  padding: 6px 10px;
-  border-radius: 6px;
-  opacity: 0.85;
-}
-
-/* ----- 6. Planner slide: panel on the left, graph on the right ----- */
+/* ----- 5. Planner slide: panel on the left, graph on the right ----- */
 .planner { display: flex; gap: 30px; align-items: flex-start; font-size: 0.55em; }
 .panel {
   flex: 1;
@@ -125,11 +96,12 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
 }
 .fill.bad { background: var(--over); }
 
-/* Status badge: each state has its own color AND symbol (set in planner.js) */
+/* Status badge: Great, Good, and Bad (set in planner.js) */
 .badge { padding: 4px 14px; border-radius: 999px; font-weight: 700; color: #ffffff; }
-.badge.feasible { background: var(--ok); }
-.badge.over     { background: var(--over); }
-.badge.short    { background: var(--short); }
+.badge.great { background: var(--ok); }
+.badge.good  { background: var(--blue); }
+.badge.bad   { background: var(--over); }
+.badge.short { background: var(--short); }
 
 .panel button {
   background: var(--blue);
@@ -152,12 +124,13 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
   border: 1px solid var(--border);
 }
 
-/* Feasible / short rows in the mix tables */
+/* Great, Good, and Bad rows in the mix table */
 .reveal .mixes .best { background: var(--panel); font-weight: 700; }
-.reveal td.ok { color: var(--ok); font-weight: 700; }
-.reveal td.no { color: var(--short); font-weight: 700; }
+.reveal td.great { color: var(--ok); font-weight: 700; }
+.reveal td.good { color: var(--blue); font-weight: 700; }
+.reveal td.bad { color: var(--short); font-weight: 700; }
 
-/* ----- 7. Themes -----
+/* ----- 6. Themes -----
    Whitefish is the original blue deck (:root above).
    The other themes only swap colors. */
 html[data-theme="night"] {
@@ -217,84 +190,21 @@ html, body { background: var(--bg); color: var(--text); }
 .reveal { color: var(--text); }
 .reveal h1, .reveal h2 { color: var(--navy); }
 
-/* Keep the slide clear of the side list on a wide screen. */
-@media (min-width: 1101px) {
-  .reveal { left: 184px !important; width: calc(100% - 196px) !important; }
-}
-
-/* ----- 8. Chrome: side list, settings, slide number, scroll cue ----- */
-.chrome-btn {
-  position: fixed;
-  z-index: 46;
-  top: 12px;
-  min-height: 44px;
-  margin: 0;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--navy);
-  font: 700 14px/1 system-ui, sans-serif;
-  cursor: pointer;
-}
-#settingsOpen { left: 12px; }
-#navToggle { left: 118px; display: none; }
-.chrome-btn:hover { background: var(--border); }
-
-#sideNav {
-  position: fixed;
-  z-index: 40;
-  top: 64px;
-  left: 10px;
-  bottom: 12px;
-  width: 164px;
-  overflow: auto;
-  padding: 8px;
-  border-radius: 14px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 24px rgba(11, 31, 58, 0.08);
-}
-#sideNav ol { list-style: none; margin: 0; padding: 0; }
-#sideNav button {
-  width: 100%;
-  min-height: 44px;
-  margin: 0 0 4px;
-  padding: 6px 8px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text);
-  font: 650 14px/1.2 system-ui, sans-serif;
-  text-align: left;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  cursor: pointer;
-}
-#sideNav button:hover { background: var(--border); }
-#sideNav button[aria-current="true"] { background: var(--blue); color: #fff; }
-#sideNav .nav-num {
-  flex: 0 0 auto;
-  width: 1.4em;
-  font-variant-numeric: tabular-nums;
-}
-#sideNav .nav-sub { display: none; margin: 0 0 6px 22px; }
-#sideNav li.is-section .nav-sub { display: block; }
-#sideNav .nav-v { min-height: 36px; font-size: 13px; }
-
+/* ----- 7. Chrome: slide number and scroll cue ----- */
 .reveal .slide-number {
-  right: 14px;
-  bottom: 14px;
+  left: 50%;
+  right: auto;
+  bottom: 12px;
+  transform: translateX(-50%);
   z-index: 45;
-  background: var(--navy);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 700;
-  padding: 8px 12px;
-  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  border-radius: 0;
 }
-.reveal .slide-number a { color: #fff !important; text-decoration: none; }
+.reveal .slide-number a { color: var(--muted) !important; text-decoration: none; }
 
 .reveal .controls { z-index: 44; }
 .reveal .controls button { width: 48px; height: 48px; }
@@ -315,9 +225,6 @@ html, body { background: var(--bg); color: var(--text); }
   font: 700 15px/1 system-ui, sans-serif;
   cursor: pointer;
 }
-@media (min-width: 1101px) {
-  #scrollCue { left: calc(184px + (100% - 196px) / 2); }
-}
 #scrollCue .chev { display: inline-block; margin-left: 6px; }
 html[data-motion="allow"] #scrollCue .chev,
 html:not([data-motion="reduce"]) #scrollCue .chev {
@@ -332,37 +239,17 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none; }
   50% { transform: translateY(5px); }
 }
 
-#mathHelpBar {
-  position: fixed;
-  z-index: 36;
-  left: 190px;
-  right: 150px;
-  bottom: 14px;
-  margin: 0;
-  padding: 8px 12px;
-  border-radius: 10px;
+/* ----- 8. Sheets, neighborhood clip, code ----- */
+.reveal .city-animation {
+  display: block;
+  max-height: 400px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin: 8px 0 12px;
+  border-radius: 16px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.35;
 }
-#mathHelpBar code { color: var(--blue); }
-
-body.nav-narrow #navToggle { display: inline-flex; align-items: center; }
-body.nav-narrow #sideNav {
-  transform: translateX(-120%);
-  transition: transform 0.2s ease;
-}
-body.nav-narrow #sideNav.open { transform: none; }
-body.nav-narrow #mathHelpBar { left: 12px; right: 12px; bottom: 12px; }
-html.math-help #scrollCue { bottom: 92px; }
-@media (prefers-reduced-motion: reduce) {
-  body.nav-narrow #sideNav { transition: none; }
-}
-html[data-motion="reduce"] body.nav-narrow #sideNav { transition: none; }
-
-/* ----- 9. Sheets, backup slot, code, lightbox ----- */
 .sheet-frame {
   height: 420px;
   overflow: hidden;
@@ -371,29 +258,6 @@ html[data-motion="reduce"] body.nav-narrow #sideNav { transition: none; }
   background: #fff;
 }
 .sheet-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-.shot-empty {
-  min-height: 200px;
-  margin-top: 8px;
-  padding: 24px 28px;
-  border: 2px dashed var(--blue);
-  border-radius: 16px;
-  background: var(--panel);
-  text-align: left;
-}
-.shot-empty strong { display: block; margin-bottom: 8px; color: var(--navy); font-size: 1.15em; }
-
-.zoom-hit {
-  background: transparent;
-  color: inherit;
-  border: 0;
-  padding: 0;
-  margin: 0;
-  cursor: zoom-in;
-  display: inline-block;
-  max-width: 100%;
-}
-.zoom-hit img { max-height: 400px; max-width: 100%; width: auto; display: block; }
 
 .code-panel {
   max-height: 240px;
@@ -418,89 +282,7 @@ html[data-motion="reduce"] body.nav-narrow #sideNav { transition: none; }
   min-width: 100%;
 }
 
-dialog {
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--bg);
-  color: var(--text);
-  padding: 22px 24px;
-  max-width: min(480px, 94vw);
-}
-dialog::backdrop { background: rgba(8, 15, 28, 0.62); }
-dialog h2 { margin: 0 0 8px; color: var(--navy); font-size: 1.4rem; }
-dialog p { margin: 0 0 14px; font-size: 0.95rem; }
-dialog label { display: block; margin: 0 0 12px; font-weight: 700; color: var(--navy); }
-dialog select, dialog input[type="checkbox"] { margin-top: 4px; }
-dialog select {
-  display: block;
-  width: 100%;
-  min-height: 44px;
-  font: 16px/1.2 system-ui, sans-serif;
-  color: var(--text);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px;
-}
-dialog .check { font-weight: 650; display: flex; gap: 8px; align-items: center; }
-dialog button[data-close] {
-  min-height: 44px;
-  margin-top: 8px;
-  padding: 8px 16px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--blue);
-  color: #fff;
-  font: 700 15px/1 system-ui, sans-serif;
-  cursor: pointer;
-}
-
-#lightbox {
-  width: 100vw;
-  height: 100vh;
-  max-width: 100vw;
-  max-height: 100vh;
-  margin: 0;
-  padding: 48px 16px 16px;
-  border: 0;
-  background: transparent;
-  display: grid;
-  place-items: center;
-  overflow: auto;
-}
-#lightbox img {
-  max-width: min(1100px, 94vw);
-  max-height: 82vh;
-  width: auto;
-  height: auto;
-  background: #fff;
-  border-radius: 8px;
-}
-#lightboxClose {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-}
-
-.red-wash {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  pointer-events: none;
-  background: rgba(190, 18, 60, 0.28);
-  opacity: 0;
-}
-html.fx-red-fade .red-wash.wash-on { animation: red-fade 480ms ease; }
-@keyframes red-fade {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-html[data-motion="reduce"] .red-wash,
 html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
-@media (prefers-reduced-motion: reduce) {
-  html[data-motion="system"] .red-wash { animation: none !important; }
-}
 
 :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
 
@@ -509,5 +291,4 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
 
 @media (max-width: 1100px) {
   #scrollCue { left: 50%; }
-  #mathHelpBar { left: 12px; right: 12px; }
 }

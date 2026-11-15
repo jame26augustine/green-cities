@@ -61,16 +61,19 @@ function update() {
   costBar.classList.toggle("bad", !inBudget(x, y));
   energyBar.classList.toggle("bad", !enoughEnergy(x, y));
 
-  // Badge: check budget first, then energy
-  if (!inBudget(x, y)) {
-    badge.textContent = "✕ Over budget";
-    badge.className = "badge over";
-  } else if (!enoughEnergy(x, y)) {
-    badge.textContent = "⚠ Not enough energy";
-    badge.className = "badge short";
+  // Great is only 5 solar and 1 geothermal. Good is any other mix that works.
+  if (x === 5 && y === 1 && isFeasible(x, y)) {
+    badge.textContent = "Great";
+    badge.className = "badge great";
+  } else if (isFeasible(x, y)) {
+    badge.textContent = "Good";
+    badge.className = "badge good";
+  } else if (!inBudget(x, y)) {
+    badge.textContent = "Bad · Over budget";
+    badge.className = "badge bad";
   } else {
-    badge.textContent = "✓ Feasible";
-    badge.className = "badge feasible";
+    badge.textContent = "Bad · Not enough energy";
+    badge.className = "badge short";
   }
 
   drawGraph(x, y);
@@ -164,7 +167,9 @@ function drawGraph(curX, curY) {
   ctx.fillStyle = COLORS.budget;
   ctx.fillText("Budget line", ...offset(toPx(5.2, 1.3)));
   ctx.fillStyle = COLORS.energy;
-  ctx.fillText("Energy line", ...offset(toPx(1.2, 2.6), -80));
+  // Keep the words in the open space under the energy line.
+  // Farther right, the line drops and would run through the text.
+  ctx.fillText("Energy line", ...offset(toPx(1.55, 0.9), 0));
 
   // Dots for every whole-number feasible mix
   for (let x = 0; x <= MAX_UNITS; x++) {
