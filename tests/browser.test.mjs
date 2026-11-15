@@ -137,26 +137,24 @@ await page.waitForFunction(() => window.Reveal && Reveal.isReady());
 await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "totals-slide");
 check("id hash opens the solution check again", true, hash);
 
-await page.click("#settingsOpen");
-await page.waitForSelector("#settingsDialog[open]");
-const settingsFocus = await page.evaluate(() => document.activeElement?.id);
-check("settings dialog takes focus", settingsFocus === "settingsClose", settingsFocus);
-await page.select("#themeSelect", "night");
-await page.select("#transitionSelect", "red-fade");
-await page.select("#motionSelect", "reduce");
-await page.click("#mathHelp");
-const reduced = await page.evaluate(() => ({
+const settingsGone = await page.evaluate(() => ({
+  button: !!document.getElementById("settingsOpen"),
+  dialog: !!document.getElementById("settingsDialog"),
+  help: !!document.getElementById("mathHelpBar")
+}));
+check("settings and math help are gone", settingsGone.button === false && settingsGone.dialog === false && settingsGone.help === false, JSON.stringify(settingsGone));
+await page.keyboard.press("KeyT");
+const night = await page.evaluate(() => ({
   theme: document.documentElement.dataset.theme,
-  motion: document.documentElement.dataset.motion,
-  fx: document.documentElement.classList.contains("fx-red-fade"),
-  transition: Reveal.getConfig().transition,
-  math: !document.getElementById("mathHelpBar").hidden,
   stored: JSON.parse(localStorage.getItem("greenCitiesDeckSettings")).theme
 }));
-check("reduced motion turns off the red fade", reduced.theme === "night" && reduced.motion === "reduce" && reduced.fx === false && reduced.transition === "none" && reduced.math === true, JSON.stringify(reduced));
-await page.keyboard.press("Escape");
-await page.waitForFunction(() => !document.getElementById("settingsDialog").open);
-check("escape closes settings", true);
+check("T switches to Night", night.theme === "night" && night.stored === "night", JSON.stringify(night));
+await page.keyboard.press("KeyT");
+await page.keyboard.press("KeyT");
+await page.keyboard.press("KeyT");
+const cycled = await page.evaluate(() => document.documentElement.dataset.theme);
+check("T cycles back to Whitefish", cycled === "whitefish", cycled);
+await page.keyboard.press("KeyT");
 
 await page.reload({ waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.Reveal && Reveal.isReady());
@@ -164,8 +162,7 @@ const persisted = await page.evaluate(() => document.documentElement.dataset.the
 check("theme persists after reload", persisted === "night", persisted);
 
 await page.evaluate(() => {
-  const next = { theme: "whitefish", transition: "none", motion: "reduce", mathHelp: false };
-  localStorage.setItem("greenCitiesDeckSettings", JSON.stringify(next));
+  localStorage.setItem("greenCitiesDeckSettings", JSON.stringify({ theme: "whitefish" }));
 });
 await page.reload({ waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.Reveal && Reveal.isReady());
@@ -208,6 +205,35 @@ const meters = await page.evaluate(() => ({
   y: document.getElementById("geoValue").textContent
 }));
 check("recommended mix is 5 and 1 at $200,000 and 7,000", meters.x === "5" && meters.y === "1" && meters.cost === "$200,000" && meters.energy === "7,000", JSON.stringify(meters));
+const labels = await page.evaluate(() => {
+  function status(x, y) {
+    solarSlider.value = String(x);
+    geoSlider.value = String(y);
+    solarSlider.dispatchEvent(new Event("input"));
+    return document.getElementById("badge").textContent;
+  }
+  return {
+    great: status(5, 1),
+    good: status(6, 0),
+    short: status(5, 0),
+    over: status(7, 1)
+  };
+});
+check("status labels are Great, Good, and Bad", labels.great === "Great" && labels.good === "Good" && labels.short === "Bad · Not enough energy" && labels.over === "Bad · Over budget", JSON.stringify(labels));
+
+async function slideText(page, title) {
+  return page.evaluate((title) => {
+    const el = document.querySelector('[data-title="' + title + '"]');
+    const index = Reveal.getIndices(el);
+    Reveal.slide(index.h, index.v);
+    const box = el.getBoundingClientRect();
+    return { text: (el.innerText || "").slice(0, 160), h: box.height, w: box.width };
+  }, title);
+}
+const recommendation = await slideText(page, "Recommendation");
+check("recommendation slide renders", recommendation.h > 80 && /Great/.test(recommendation.text), JSON.stringify(recommendation));
+const sources = await slideText(page, "Sources");
+check("sources slide renders", sources.h > 40 && /Sources/.test(sources.text) && /Class project data/.test(sources.text), JSON.stringify(sources));
 
 const gateStatus = await page.evaluate(async () => {
   const response = await fetch("gate.js");
@@ -223,10 +249,10 @@ const phoneBoot = await phone.evaluate(() => ({
   toggle: !!document.getElementById("navToggle"),
   sideNav: !!document.getElementById("sideNav"),
   narrow: document.body.classList.contains("nav-narrow"),
-  settings: getComputedStyle(document.getElementById("settingsOpen")).display,
+  settings: !!document.getElementById("settingsOpen"),
   heading: document.querySelector(".present h1, .present h2")?.innerText || ""
 }));
-check("phone has no slide-list control", phoneBoot.toggle === false && phoneBoot.sideNav === false && phoneBoot.narrow === false && phoneBoot.settings !== "none", JSON.stringify(phoneBoot));
+check("phone has no slide-list control", phoneBoot.toggle === false && phoneBoot.sideNav === false && phoneBoot.narrow === false && phoneBoot.settings === false, JSON.stringify(phoneBoot));
 await phone.keyboard.press("ArrowRight");
 await phone.waitForFunction(() => /Problem/.test(Reveal.getCurrentSlide()?.innerText || ""));
 check("phone arrow key still changes sections", true);

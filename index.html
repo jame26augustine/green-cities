@@ -10,8 +10,6 @@
     try {
       var savedDeck = JSON.parse(localStorage.getItem("greenCitiesDeckSettings") || "{}");
       if (savedDeck.theme) document.documentElement.dataset.theme = savedDeck.theme;
-      if (savedDeck.motion) document.documentElement.dataset.motion = savedDeck.motion;
-      if (savedDeck.mathHelp) document.documentElement.classList.add("math-help");
     } catch (error) {}
   </script>
   <!-- reveal.js is saved in the vendor/ folder, so the deck works with no internet -->
@@ -22,45 +20,7 @@
   <link rel="stylesheet" href="deck.css">
 </head>
 <body>
-  <button type="button" id="settingsOpen" class="chrome-btn">Settings</button>
   <button type="button" id="scrollCue" hidden>Scroll down <span class="chev" aria-hidden="true">↓</span></button>
-  <p id="mathHelpBar" hidden>
-    <b>Layout:</b> x = 10 kW solar systems, y = geothermal units.
-    Budget <code>30000x + 50000y ≤ 200000</code>.
-    Energy <code>1100x + 1500y ≥ 6000</code>.
-    Recommended mix: 5 solar systems and 1 geothermal unit, $200,000, 7,000 kWh/month.
-  </p>
-  <div class="red-wash" aria-hidden="true"></div>
-
-  <dialog id="settingsDialog" aria-labelledby="settingsTitle">
-    <h2 id="settingsTitle">Deck settings</h2>
-    <p>Whitefish keeps the original blue deck. Other choices change color or motion only. The inequalities stay the same.</p>
-    <label>Theme
-      <select id="themeSelect">
-        <option value="whitefish">Whitefish</option>
-        <option value="night">Night</option>
-        <option value="pine">Pine</option>
-        <option value="signal">Signal</option>
-      </select>
-    </label>
-    <label>Transition
-      <select id="transitionSelect">
-        <option value="slide">Slide</option>
-        <option value="fade">Fade</option>
-        <option value="red-fade">Red fade</option>
-        <option value="none">None</option>
-      </select>
-    </label>
-    <label>Motion
-      <select id="motionSelect">
-        <option value="system">Match this device</option>
-        <option value="reduce">Reduce motion</option>
-        <option value="allow">Allow motion</option>
-      </select>
-    </label>
-    <label class="check"><input type="checkbox" id="mathHelp"> Show math layout help</label>
-    <button type="button" id="settingsClose" data-close>Close</button>
-  </dialog>
 
   <dialog id="lightbox" aria-label="Enlarged image">
     <button type="button" id="lightboxClose" data-close>Close</button>
@@ -76,7 +36,8 @@
         <h1>Green Cities ❄ 𖤓</h1>
         <h3>Powering Whitefish, Montana</h3>
         <p>Solar + geothermal energy with a system of linear inequalities</p>
-        <p class="small">James A· Algebra · ← → change sections · ↓ or scroll moves down a stack</p>
+        <p class="small">James A· Algebra</p>
+        <p class="small">Press T to change colors</p>
       </section>
 
       <section data-title="Problem">
@@ -87,7 +48,7 @@
           <tr><td><b>x</b></td><td>Solar system, 10 kW</td><td>$30,000</td><td>1,100 kWh/mo</td></tr>
           <tr><td><b>y</b></td><td>Geothermal unit</td><td>$50,000</td><td>1,500 kWh/mo</td></tr>
         </table>
-        <p class="small">x is one solar system, not one panel. Budget: $200,000 · Goal: at least 6,000 kWh/month</p>
+        <p>We have $200,000 and need at least 6,000 kWh a month.</p>
       </section>
 
       <section data-title="Inequalities">
@@ -96,7 +57,7 @@
           <span class="small">Do not spend more than $200,000.</span></p>
         <p><b>Energy:</b> <code>1100x + 1500y ≥ 6000</code><br>
           <span class="small">Make at least 6,000 kWh each month.</span></p>
-        <p><code>x ≥ 0</code> and <code>y ≥ 0</code>. You cannot buy a negative amount.</p>
+        <p>x and y can't be negative. You can't buy fewer than zero.</p>
         <p>x and y are whole numbers. You cannot buy part of a system.</p>
       </section>
 
@@ -113,9 +74,8 @@
             <div class="bar"><div id="costBar" class="fill"></div></div>
             <p>Energy: <span id="energyText">7,000</span> / 6,000 kWh</p>
             <div class="bar"><div id="energyBar" class="fill"></div></div>
-            <p>Status: <span id="badge" class="badge">✓ Feasible</span></p>
+            <p>Status: <span id="badge" class="badge great">Great</span></p>
             <button type="button" id="recommendBtn">Recommended: 5 solar systems + 1 geothermal</button>
-            <p class="small">Each solar system is 10 kW. The sliders do not count single panels.</p>
           </div>
           <canvas id="graph" width="500" height="500"></canvas>
         </div>
@@ -126,12 +86,12 @@
         <p class="small">x = solar systems (10 kW each). y = geothermal units.</p>
         <table class="mixes">
           <tr><th>Mix (x, y)</th><th>Cost</th><th>Energy</th><th>Result</th></tr>
-          <tr><td>(6, 0)</td><td>$180,000</td><td>6,600</td><td class="ok">Feasible</td></tr>
-          <tr class="best"><td>(5, 1) ⭐</td><td>$200,000</td><td>7,000</td><td class="ok">Feasible</td></tr>
-          <tr><td>(3, 2)</td><td>$190,000</td><td>6,300</td><td class="ok">Feasible</td></tr>
-          <tr><td>(0, 4)</td><td>$200,000</td><td>6,000</td><td class="ok">Feasible</td></tr>
-          <tr><td>(5, 0)</td><td>$150,000</td><td>5,500</td><td class="no">Not enough energy</td></tr>
-          <tr><td>(4, 1)</td><td>$170,000</td><td>5,900</td><td class="no">Not enough energy</td></tr>
+          <tr><td>(6, 0)</td><td>$180,000</td><td>6,600</td><td class="good">Good</td></tr>
+          <tr class="best"><td>(5, 1) ⭐</td><td>$200,000</td><td>7,000</td><td class="great">Great</td></tr>
+          <tr><td>(3, 2)</td><td>$190,000</td><td>6,300</td><td class="good">Good</td></tr>
+          <tr><td>(0, 4)</td><td>$200,000</td><td>6,000</td><td class="good">Good</td></tr>
+          <tr><td>(5, 0)</td><td>$150,000</td><td>5,500</td><td class="bad">Bad · Not enough energy</td></tr>
+          <tr><td>(4, 1)</td><td>$170,000</td><td>5,900</td><td class="bad">Bad · Not enough energy</td></tr>
         </table>
       </section>
 
@@ -139,9 +99,9 @@
         <h2>Recommendation: 5 Solar Systems + 1 Geothermal</h2>
         <p><b>$200,000</b> · <b>7,000 kWh/month</b></p>
         <ul>
-          <li>(5, 1) gives the most energy: 7,000 kWh, which is 1,000 over the goal.</li>
-          <li>(6, 0) also works. It costs $180,000, so it is $20,000 less.</li>
-          <li>We still choose (5, 1). The geothermal unit helps in cold Montana winters, so we spend the full budget.</li>
+          <li>5 solar and 1 geothermal is Great. It makes the most energy, 7,000 kWh, which is 1,000 over the goal.</li>
+          <li>6 solar and no geothermal is Good. It costs $180,000, so it is $20,000 less.</li>
+          <li>We still choose 5 solar and 1 geothermal. The geothermal unit helps in cold Montana winters, so we spend the full budget.</li>
         </ul>
       </section>
 
@@ -150,7 +110,6 @@
         <button type="button" class="zoom-hit" id="designMapZoom" aria-label="Enlarge the design map">
           <img src="images/design-map.png" alt="Whitefish Green Energy Grid diagram with 5 solar, 1 geothermal, and the neighborhood">
         </button>
-        <p class="small">5 solar systems (10 kW each) and 1 geothermal unit feed the neighborhood loads. The map artwork says “panels”; each solar box is one system, not one panel.</p>
       </section>
 
       <!-- Vertical stack: Google Sheet, then the check of (5, 1). -->
@@ -161,7 +120,6 @@
           <div class="sheet-frame scroll-panel" data-prevent-swipe>
             <iframe title="Cost and Emissions Analysis spreadsheet" src="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/preview"></iframe>
           </div>
-          <p class="small">If the frame asks you to sign in, use the link above. Scrolling inside the frame stays in the sheet. The number check is the next slide down.</p>
         </section>
 
         <section data-title="Totals" id="totals-slide">
@@ -174,16 +132,13 @@
             <tr><td>Energy</td><td>5 × 1,100 + 1 × 1,500 = 7,000 kWh</td></tr>
           </table>
           <p class="small">Budget check: 30,000 × 5 + 50,000 × 1 = 200,000, and 200,000 ≤ 200,000. Energy check: 1,100 × 5 + 1,500 × 1 = 7,000, and 7,000 ≥ 6,000.</p>
-          <p class="small">Over its life: (5,500 × 43 + 1,500 × 37) / 7,000 ≈ 42 g per kWh. 7,000 × 42 g = 294,000 g, about 0.3 metric tons.</p>
-          <p class="small">A coal plant makes 2.31 lb of CO₂ per kWh, about 1,050 g. 7,000 × 2.31 lb = 16,170 lb, about 7.3 metric tons. The 42 g counts the whole life of the gear. The coal number is only what the plant puts out.</p>
         </section>
       </section>
 
       <section data-title="Summary">
         <h2>Summary + Conclusion</h2>
         <p>Whitefish needs at least 6,000 kWh a month and cannot spend more than $200,000.</p>
-        <p>(5, 1) gives the most energy. (6, 0) also works and costs $20,000 less. We choose (5, 1) because geothermal helps in winter.</p>
-        <p>7,000 × 42 g is about 0.3 metric tons. The same 7,000 kWh from a coal plant is about 7.3 metric tons of CO₂.</p>
+        <p>5 solar and 1 geothermal is Great. It gives the most energy. 6 solar and no geothermal is Good and costs $20,000 less. We choose 5 and 1 because geothermal helps in winter.</p>
         <p><b>Town Hall line:</b> This plan gives Whitefish clean power in winter and summer without going over budget.</p>
       </section>
 
@@ -191,11 +146,6 @@
         <h2>Sources</h2>
         <ul style="text-align:left;">
           <li class="small">Class project data (Whitefish cost and energy spreadsheet)</li>
-          <li class="small">U.S. EIA FAQ 74 — CO₂ per kWh of U.S. electricity. In 2023, coal plants made 2.31 lb of CO₂ per kWh (about 1,050 g). That is only what the power plant puts out.</li>
-          <li class="small">Ember — US Electricity 2025 special report (the whole U.S. grid was about 384 g CO₂/kWh in 2024)</li>
-          <li class="small">Alliance for Innovation and Infrastructure — 2024 Energy Spotlights. Solar is about 43 g and geothermal is about 37 g of CO₂e per kWh over the life of the gear.</li>
-          <li class="small">reveal.js — presentation framework (revealjs.com)</li>
-          <li class="small">https://www.desmos.com/ - sheets and graphs</li>
         </ul>
       </section>
 
@@ -203,13 +153,12 @@
       <section data-title="Thanks">
         <section data-title="Thank you" id="thanks-slide">
           <h2>Thank you! Questions?</h2>
-          <p class="small">Green Cities · Powering Whitefish, Montana</p>
-          <p class="small">Scroll down for the code appendix. The samples are copied from this repo.</p>
+          <p class="small">Scroll down for the code.</p>
         </section>
 
-        <section data-title="Code: math" id="code-math">
-          <h2>Code: the inequalities</h2>
-          <p class="small">Copied from <code>planner.js</code>. x is how many 10 kW solar systems. y is geothermal units. Cost and energy use these constants; the button only picks 5 and 1.</p>
+        <section data-title="Code for the inequalities" id="code-math">
+          <h2>Code for the inequalities</h2>
+          <p class="small">const means a number that never changes, like the price of one solar system.</p>
           <div class="code-panel scroll-panel" data-prevent-swipe>
             <pre><code>const SOLAR_COST = 30000;     // dollars per solar system (10 kW)
 const SOLAR_ENERGY = 1100;    // kWh per month per solar system
@@ -235,9 +184,9 @@ recommendBtn.addEventListener("click", function () {
           </div>
         </section>
 
-        <section data-title="Code: graph" id="code-graph">
-          <h2>Code: the graph lines</h2>
-          <p class="small">Copied from <code>drawGraph</code> in <code>planner.js</code>. The comment in the file states the intercepts. Same constants, so the picture matches the inequalities.</p>
+        <section data-title="Code for the graph lines" id="code-graph">
+          <h2>Code for the graph lines</h2>
+          <p class="small">This code draws the budget line and the energy line.</p>
           <div class="code-panel scroll-panel" data-prevent-swipe>
             <pre><code>// Budget line: 30000x + 50000y = 200000 -&gt; (0, 4) to (6.67, 0)
 line(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, COLORS.budget, 2);
@@ -246,9 +195,9 @@ line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 
           </div>
         </section>
 
-        <section data-title="Code: stacks" id="code-stacks">
-          <h2>Code: stacks and the wheel</h2>
-          <p class="small">Copied from <code>decideWheel</code> in <code>deck-nav.js</code>. A vertical scroll moves inside the stack. It does not skip sideways. A sideways scroll changes sections. Scrolling a code box or the Google Sheet is left alone.</p>
+        <section data-title="Code for scrolling" id="code-stacks">
+          <h2>Code for scrolling</h2>
+          <p class="small">This code decides if a scroll moves you down a slide or over to the next section.</p>
           <div class="code-panel scroll-panel" data-prevent-swipe>
             <pre><code>function decideWheel(input) {
   if (!input || input.uiOpen || input.scrollable) return "ignore";
@@ -258,8 +207,8 @@ line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 
   var absX = Math.abs(deltaX);
   var absY = Math.abs(deltaY);
   if (Math.max(absX, absY) &lt; WHEEL_THRESHOLD) return "ignore";
-  // Vertical wheel moves down or up inside the current stack.
-  // It does not jump to the next horizontal section.
+  // A vertical scroll moves down or up inside these slides.
+  // It does not jump over to the next section.
   if (absY &gt;= absX) {
     if (deltaY &gt; 0 &amp;&amp; routes.down) return "down";
     if (deltaY &lt; 0 &amp;&amp; routes.up) return "up";

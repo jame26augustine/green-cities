@@ -42,8 +42,9 @@ test("school math is unchanged and solar means systems", () => {
   assert.match(html, /5 solar systems/);
   assert.match(planner, /solarSlider\.value = 5/);
   assert.match(planner, /geoSlider\.value = 1/);
-  assert.match(html, /not one panel/);
-  assert.doesNotMatch(html, /5 panels|solar panels/i);
+  assert.match(html, /We have \$200,000 and need at least 6,000 kWh a month/);
+  assert.doesNotMatch(html, /not one panel/);
+  assert.doesNotMatch(html, /5 panels|solar panels|Panels on roofs/i);
 });
 
 test("sheet stack, solution check, and real code excerpts", () => {
@@ -60,7 +61,9 @@ test("sheet stack, solution check, and real code excerpts", () => {
   assert.equal(fs.existsSync(path.join(root, "images", "sheet-backup.png")), false);
   assert.equal(fs.existsSync(path.join(root, "images", "design-map.png")), true);
   assert.match(html, /docs\.google\.com\/spreadsheets\/d\/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw\/edit/);
-  assert.match(html, /https:\/\/www\.desmos\.com\/ - sheets and graphs/);
+  assert.match(html, /Class project data/);
+  assert.doesNotMatch(html, /desmos\.com/);
+  assert.doesNotMatch(html, /revealjs\.com/);
   assert.match(html, /function decideWheel\(input\)/);
   assert.match(nav, /function decideWheel\(input\)/);
   assert.match(nav, /does not jump to the next horizontal section/);
@@ -70,26 +73,29 @@ test("sheet stack, solution check, and real code excerpts", () => {
   assert.match(planner, /BUDGET \/ SOLAR_COST/);
 });
 
-test("rubric lines are visible and the coal number is corrected", () => {
+test("plain labels and the solution check stay on the slides", () => {
   const html = read("index.html");
   const planner = read("planner.js");
-  assert.doesNotMatch(html, /class="fragment"><b>Budget:/);
-  assert.match(html, /x ≥ 0/);
+  assert.match(html, /x and y can't be negative/);
   assert.match(html, /whole numbers/);
   assert.match(html, /5 × 1,100 \+ 1 × 1,500 = 7,000 kWh/);
   assert.match(html, /30,000 × 5 \+ 50,000 × 1 = 200,000/);
   assert.match(html, /1,100 × 5 \+ 1,500 × 1 = 7,000/);
   assert.match(html, /The blue shade meets both inequalities/);
-  assert.match(html, /\(6, 0\) also works/);
+  assert.match(html, /is Great/);
+  assert.match(html, /is Good/);
   assert.match(html, /\$20,000 less/);
-  assert.match(html, /5,500 × 43 \+ 1,500 × 37/);
-  assert.match(html, /7,000 × 42 g = 294,000 g/);
-  assert.match(html, /2\.31 lb/);
-  assert.match(html, /7,000 × 2\.31 lb = 16,170 lb/);
-  assert.match(html, /about 7\.3 metric tons/);
+  assert.match(html, /Press T to change colors/);
+  assert.match(html, /Bad · Not enough energy/);
+  assert.match(planner, /badge\.textContent = "Great"/);
+  assert.match(planner, /badge\.textContent = "Good"/);
+  assert.match(planner, /Bad · Over budget/);
+  assert.doesNotMatch(html, />Feasible</);
+  assert.doesNotMatch(html, /42 g/);
+  assert.doesNotMatch(html, /EIA|Ember|Alliance for Innovation/);
   assert.doesNotMatch(html, /820/);
-  assert.doesNotMatch(html, /4,500/);
-  assert.doesNotMatch(html, /2% solar/);
+  assert.doesNotMatch(html, /id="settingsDialog"/);
+  assert.doesNotMatch(html, /id="settingsOpen"/);
   assert.doesNotMatch(planner, /toPx\(1\.2, 2\.6\), -80/);
   assert.match(planner, /toPx\(1\.55, 0\.9\)/);
 });
@@ -120,18 +126,19 @@ test("draft material and the side list are gone", () => {
     assert.doesNotMatch(text, /coming-soon/);
     assert.doesNotMatch(text, /drafts\//);
     assert.doesNotMatch(text, />DRAFT</);
+    assert.doesNotMatch(text, /draft/i);
   }
   assert.equal(fs.existsSync(path.join(root, "drafts")), false);
   assert.equal(fs.existsSync(path.join(root, "drafts", "later-slides.html")), false);
   assert.match(html, /id="scrollCue"/);
-  assert.match(html, /id="settingsOpen"/);
+  assert.doesNotMatch(html, /id="settingsOpen"/);
   assert.match(html, /controls:\s*true/);
 });
 
 test("themes, lightbox, slide numbers, and direct-link settings exist", () => {
   const html = read("index.html");
   const css = read("deck.css");
-  assert.match(html, /id="settingsDialog"/);
+  assert.doesNotMatch(html, /id="settingsDialog"/);
   assert.match(html, /id="lightbox"/);
   assert.match(html, /id="scrollCue"/);
   assert.match(html, /keyboard:\s*true/);
@@ -141,6 +148,6 @@ test("themes, lightbox, slide numbers, and direct-link settings exist", () => {
   assert.match(css, /data-theme="night"/);
   assert.match(css, /data-theme="pine"/);
   assert.match(css, /data-theme="signal"/);
-  assert.match(css, /red-fade/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(read("deck-ui.js"), /function cycleTheme/);
 });

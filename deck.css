@@ -20,7 +20,7 @@
 
   /* Status colors: kept different from each other on purpose,
      and dark enough to read on a white background */
-  --ok:    #16a34a;   /* Feasible: green check */
+  --ok:    #16a34a;   /* Great: green */
   --over:  #dc2626;   /* Over budget: red */
   --short: #d97706;   /* Not enough energy: amber */
 
@@ -96,11 +96,12 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
 }
 .fill.bad { background: var(--over); }
 
-/* Status badge: each state has its own color AND symbol (set in planner.js) */
+/* Status badge: Great, Good, and Bad (set in planner.js) */
 .badge { padding: 4px 14px; border-radius: 999px; font-weight: 700; color: #ffffff; }
-.badge.feasible { background: var(--ok); }
-.badge.over     { background: var(--over); }
-.badge.short    { background: var(--short); }
+.badge.great { background: var(--ok); }
+.badge.good  { background: var(--blue); }
+.badge.bad   { background: var(--over); }
+.badge.short { background: var(--short); }
 
 .panel button {
   background: var(--blue);
@@ -123,10 +124,11 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
   border: 1px solid var(--border);
 }
 
-/* Feasible / short rows in the mix tables */
+/* Great, Good, and Bad rows in the mix table */
 .reveal .mixes .best { background: var(--panel); font-weight: 700; }
-.reveal td.ok { color: var(--ok); font-weight: 700; }
-.reveal td.no { color: var(--short); font-weight: 700; }
+.reveal td.great { color: var(--ok); font-weight: 700; }
+.reveal td.good { color: var(--blue); font-weight: 700; }
+.reveal td.bad { color: var(--short); font-weight: 700; }
 
 /* ----- 6. Themes -----
    Whitefish is the original blue deck (:root above).
@@ -188,24 +190,7 @@ html, body { background: var(--bg); color: var(--text); }
 .reveal { color: var(--text); }
 .reveal h1, .reveal h2 { color: var(--navy); }
 
-/* ----- 7. Chrome: settings, slide number, scroll cue ----- */
-.chrome-btn {
-  position: fixed;
-  z-index: 46;
-  top: 12px;
-  min-height: 44px;
-  margin: 0;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--navy);
-  font: 700 14px/1 system-ui, sans-serif;
-  cursor: pointer;
-}
-#settingsOpen { left: 12px; }
-.chrome-btn:hover { background: var(--border); }
-
+/* ----- 7. Chrome: slide number and scroll cue ----- */
 .reveal .slide-number {
   right: 14px;
   bottom: 14px;
@@ -251,25 +236,6 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none; }
 @keyframes cue-bob {
   50% { transform: translateY(5px); }
 }
-
-#mathHelpBar {
-  position: fixed;
-  z-index: 36;
-  left: 12px;
-  right: 150px;
-  bottom: 14px;
-  margin: 0;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.35;
-}
-#mathHelpBar code { color: var(--blue); }
-
-html.math-help #scrollCue { bottom: 92px; }
 
 /* ----- 8. Sheets, code, lightbox ----- */
 .sheet-frame {
@@ -383,24 +349,7 @@ dialog button[data-close] {
   z-index: 2;
 }
 
-.red-wash {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  pointer-events: none;
-  background: rgba(190, 18, 60, 0.28);
-  opacity: 0;
-}
-html.fx-red-fade .red-wash.wash-on { animation: red-fade 480ms ease; }
-@keyframes red-fade {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-html[data-motion="reduce"] .red-wash,
 html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
-@media (prefers-reduced-motion: reduce) {
-  html[data-motion="system"] .red-wash { animation: none !important; }
-}
 
 :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
 
@@ -409,5 +358,4 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
 
 @media (max-width: 1100px) {
   #scrollCue { left: 50%; }
-  #mathHelpBar { left: 12px; right: 12px; }
 }

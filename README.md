@@ -11,7 +11,7 @@ reveal.js 6.0.2 is saved in `vendor/`, so the deck works without internet. The l
 - Slide numbers sit at the lower right (`8.2 · 9/15`).
 - Scrolling inside a code box stays in that box. Scrolling inside the Google Sheet stays in the sheet.
 - Click or tap a picture to enlarge it. Close with Escape, the Close button, or the dark backdrop.
-- Settings (top left) stores the theme, transition, motion, and math-layout help in this browser.
+- Press T to change colors. The choices are Whitefish, Night, Pine, and Signal. The choice stays in this browser.
 
 ## Files
 - `index.html` has the slides. A section inside a section is a vertical stack.
