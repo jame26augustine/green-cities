@@ -375,6 +375,10 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
 .reveal section[data-title="Summary"].present > p { animation: rise 0.45s ease both; }
 .reveal section[data-title="Summary"].present > p:nth-of-type(2) { animation-delay: 0.15s; }
 .reveal section[data-title="Summary"].present > p:nth-of-type(3) { animation-delay: 0.3s; }
+.reveal section[data-title="Summary"].present > p:nth-of-type(4) { animation-delay: 0.42s; }
+#totals-slide > h2 { margin-bottom: 0.15em; }
+#totals-slide > table { margin: 4px 0 6px; font-size: 0.62em; }
+#totals-slide > p { margin: 0.05em 0; line-height: 1.22; font-size: 0.5em; }
 
 .reveal section[data-title="Sources"].present li { animation: rise 0.45s ease both; }
 .reveal #thanks-slide.present > h2 { animation: title-in 0.45s ease both; }

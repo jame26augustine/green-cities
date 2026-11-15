@@ -105,8 +105,17 @@ test("plain labels and the solution check stay on the slides", () => {
   assert.match(planner, /Bad · Over budget/);
   assert.doesNotMatch(html, />Feasible</);
   assert.doesNotMatch(html, /42 g/);
-  assert.doesNotMatch(html, /EIA|Ember|Alliance for Innovation/);
+  assert.doesNotMatch(html, /Ember/);
   assert.doesNotMatch(html, /820/);
+  assert.match(html, /My plan makes about 0\.3 tons of CO2 a month/);
+  assert.match(html, /The same 7,000 kWh from coal would make about 7\.3 tons/);
+  assert.match(html, /So my plan makes about 24 times less pollution/);
+  assert.match(html, /The coal row in the pounds per kWh column is "2\.31"/);
+  assert.match(html, /The lifecycle emissions of Solar equal 43 grams of carbon dioxide equivalent per kWh and it has a median levelized cost of \$53\.8\/MWh\./);
+  assert.match(html, /The lifecycle emissions of Geothermal equal 37 grams of carbon dioxide equivalent per kWh and it has a levelized cost of \$248\.8\/MWh\./);
+  assert.match(html, /My plan fits the budget, makes enough energy, and makes far less pollution than coal/);
+  assert.match(html, /eia\.gov\/tools\/faqs\/faq\.php\?id=74/);
+  assert.match(html, /2024-Energy-Spotlights\.pdf/);
   assert.doesNotMatch(html, /id="settingsDialog"/);
   assert.doesNotMatch(html, /id="settingsOpen"/);
   assert.doesNotMatch(planner, /toPx\(1\.2, 2\.6\), -80/);
