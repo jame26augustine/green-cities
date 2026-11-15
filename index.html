@@ -28,6 +28,7 @@
     <div class="slides">
 
       <section class="title-slide" data-title="Title">
+        <div class="snow" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <h1>Green Cities ❄ 𖤓</h1>
         <h3>Powering Whitefish, Montana</h3>
         <p>Solar + geothermal energy with a system of linear inequalities</p>
@@ -76,7 +77,7 @@
         </div>
       </section>
 
-      <section data-title="Mixes">
+      <section data-title="Mixes" data-auto-animate>
         <h2>Mixes Compared</h2>
         <p class="small">x = solar systems (10 kW each). y = geothermal units.</p>
         <table class="mixes">
@@ -90,9 +91,9 @@
         </table>
       </section>
 
-      <section data-title="Recommendation">
+      <section data-title="Recommendation" data-auto-animate>
         <h2>Recommendation: 5 Solar Systems + 1 Geothermal</h2>
-        <p><b>$200,000</b> · <b>7,000 kWh/month</b></p>
+        <p><b class="count-up" data-id="rec-cost">$200,000</b> · <b class="count-up" data-id="rec-energy">7,000 kWh/month</b></p>
         <ul>
           <li>5 solar and 1 geothermal is Great. It makes the most energy, 7,000 kWh, which is 1,000 over the goal.</li>
           <li>6 solar and no geothermal is Good. It costs $180,000, so it is $20,000 less.</li>
@@ -150,10 +151,10 @@
           <p class="small">Scroll down for the code.</p>
         </section>
 
-        <section data-title="Code for the inequalities" id="code-math">
+        <section data-title="Code for the inequalities" id="code-math" data-auto-animate>
           <h2>Code for the inequalities</h2>
           <p class="small">const means a number that never changes, like the price of one solar system.</p>
-          <div class="code-panel scroll-panel" data-prevent-swipe>
+          <div class="code-panel scroll-panel" data-prevent-swipe data-id="code-panel">
             <pre><code>const SOLAR_COST = 30000;     // dollars per solar system (10 kW)
 const SOLAR_ENERGY = 1100;    // kWh per month per solar system
 const GEO_COST = 50000;       // dollars per geothermal unit
@@ -178,10 +179,10 @@ recommendBtn.addEventListener("click", function () {
           </div>
         </section>
 
-        <section data-title="Code for the graph lines" id="code-graph">
+        <section data-title="Code for the graph lines" id="code-graph" data-auto-animate>
           <h2>Code for the graph lines</h2>
           <p class="small">This code draws the budget line and the energy line.</p>
-          <div class="code-panel scroll-panel" data-prevent-swipe>
+          <div class="code-panel scroll-panel" data-prevent-swipe data-id="code-panel">
             <pre><code>// Budget line: 30000x + 50000y = 200000 -&gt; (0, 4) to (6.67, 0)
 line(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, COLORS.budget, 2);
 // Energy line: 1100x + 1500y = 6000 -&gt; (0, 4) to (5.45, 0)
@@ -189,10 +190,10 @@ line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 
           </div>
         </section>
 
-        <section data-title="Code for scrolling" id="code-stacks">
+        <section data-title="Code for scrolling" id="code-stacks" data-auto-animate>
           <h2>Code for scrolling</h2>
           <p class="small">This code decides if a scroll moves you down a slide or over to the next section.</p>
-          <div class="code-panel scroll-panel" data-prevent-swipe>
+          <div class="code-panel scroll-panel" data-prevent-swipe data-id="code-panel">
             <pre><code>function decideWheel(input) {
   if (!input || input.uiOpen || input.scrollable) return "ignore";
   var deltaX = input.deltaX || 0;
@@ -245,6 +246,9 @@ line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 
       mouseWheel: false,
       transition: "slide",
       transitionSpeed: "fast",
+      autoAnimate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      autoAnimateDuration: 0.6,
+      autoAnimateEasing: "ease",
       slideNumber: function (slide) {
         return ["Slide " + (Reveal.getSlidePastCount(slide) + 1), " of ", Reveal.getTotalSlides()];
       }
@@ -271,10 +275,12 @@ line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 
       DeckUI.mount();
       maybeStartPlanner();
       playNeighborhood();
+      playSlideMotion(Reveal.getCurrentSlide());
     });
-    Reveal.on("slidechanged", function () {
+    Reveal.on("slidechanged", function (event) {
       maybeStartPlanner();
       playNeighborhood();
+      playSlideMotion(event.currentSlide);
     });
   </script>
 </body>

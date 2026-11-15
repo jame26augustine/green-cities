@@ -92,7 +92,7 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--blue), var(--sky));
-  transition: width 0.3s;
+  transition: width 0.45s;
 }
 .fill.bad { background: var(--over); }
 
@@ -228,7 +228,7 @@ html, body { background: var(--bg); color: var(--text); }
 #scrollCue .chev { display: inline-block; margin-left: 6px; }
 html[data-motion="allow"] #scrollCue .chev,
 html:not([data-motion="reduce"]) #scrollCue .chev {
-  animation: cue-bob 1.4s ease-in-out infinite;
+  animation: cue-bob 0.9s ease-in-out infinite;
 }
 html[data-motion="reduce"] #scrollCue .chev { animation: none; }
 @media (prefers-reduced-motion: reduce) {
@@ -285,6 +285,170 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none; }
 html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
 
 :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+/* ----- 9. Short entrance motion -----
+   Each animation is under one second. Arrow keys still change
+   slides, because these play on their own when a slide is shown. */
+.reveal .title-slide { position: relative; }
+.reveal .title-slide .snow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.reveal .title-slide > h1,
+.reveal .title-slide > h3,
+.reveal .title-slide > p { position: relative; z-index: 1; }
+.snow span {
+  position: absolute;
+  top: 8%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sky);
+  opacity: 0.55;
+  animation: flake 0.9s linear infinite;
+}
+.snow span:nth-child(1) { left: 6%; }
+.snow span:nth-child(2) { left: 16%; animation-delay: -0.2s; width: 4px; height: 4px; }
+.snow span:nth-child(3) { left: 27%; animation-delay: -0.45s; }
+.snow span:nth-child(4) { left: 38%; animation-delay: -0.7s; width: 5px; height: 5px; }
+.snow span:nth-child(5) { left: 49%; animation-delay: -0.15s; }
+.snow span:nth-child(6) { left: 58%; animation-delay: -0.55s; width: 4px; height: 4px; }
+.snow span:nth-child(7) { left: 68%; animation-delay: -0.3s; }
+.snow span:nth-child(8) { left: 78%; animation-delay: -0.8s; width: 5px; height: 5px; }
+.snow span:nth-child(9) { left: 86%; animation-delay: -0.1s; }
+.snow span:nth-child(10) { left: 93%; animation-delay: -0.6s; width: 4px; height: 4px; }
+
+.reveal .title-slide.present > h1 { animation: title-in 0.5s ease both; }
+.reveal .title-slide.present > h3 { animation: title-in 0.5s ease 0.1s both; }
+.reveal .title-slide.present > p:nth-of-type(1) { animation: title-in 0.5s ease 0.2s both; }
+.reveal .title-slide.present > p:nth-of-type(2) { animation: title-in 0.5s ease 0.3s both; }
+.reveal .title-slide.present > p:nth-of-type(3) { animation: title-in 0.5s ease 0.4s both; }
+
+.reveal section[data-title="Problem"].present > table :is(th, td),
+.reveal section[data-title="Mixes"].present > table :is(th, td),
+.reveal #totals-slide.present > table :is(th, td) {
+  animation: rise 0.4s ease both;
+}
+.reveal section[data-title="Problem"].present > table tr:nth-child(2) > * { animation-delay: 0.12s; }
+.reveal section[data-title="Problem"].present > table tr:nth-child(3) > * { animation-delay: 0.24s; }
+.reveal section[data-title="Problem"].present > table tr:nth-child(4) > * { animation-delay: 0.36s; }
+
+.reveal section[data-title="Inequalities"].present > p { animation: rise 0.4s ease both; }
+.reveal section[data-title="Inequalities"].present > p:nth-of-type(2) { animation-delay: 0.12s; }
+.reveal section[data-title="Inequalities"].present > p:nth-of-type(3) { animation-delay: 0.24s; }
+.reveal section[data-title="Inequalities"].present > p:nth-of-type(4) { animation-delay: 0.36s; }
+
+.reveal #planner-slide.present > h2,
+.reveal #planner-slide.present > .small { animation: fade-in 0.4s ease both; }
+.reveal #recommendBtn { animation: soft-pulse 0.9s ease-in-out infinite; }
+.badge.pop { animation: pop 0.35s ease; }
+
+.reveal section[data-title="Mixes"].present > table tr:nth-child(2) > * { animation-delay: 0.08s; }
+.reveal section[data-title="Mixes"].present > table tr:nth-child(3) > * { animation-delay: 0.16s; }
+.reveal section[data-title="Mixes"].present > table tr:nth-child(4) > * { animation-delay: 0.24s; }
+.reveal section[data-title="Mixes"].present > table tr:nth-child(5) > * { animation-delay: 0.32s; }
+.reveal section[data-title="Mixes"].present > table tr:nth-child(6) > * { animation-delay: 0.4s; }
+.reveal section[data-title="Mixes"].present > table tr:nth-child(7) > * { animation-delay: 0.48s; }
+.reveal .mixes tr.best td {
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--ok) 55%, transparent);
+}
+.reveal section[data-title="Mixes"].present > table tr.best {
+  animation: glow 0.7s ease 0.16s;
+}
+
+.reveal section[data-title="Recommendation"].present > ul li { animation: rise 0.4s ease both; }
+.reveal section[data-title="Recommendation"].present > ul li:nth-child(2) { animation-delay: 0.12s; }
+.reveal section[data-title="Recommendation"].present > ul li:nth-child(3) { animation-delay: 0.24s; }
+
+.reveal section[data-title="Our Whitefish Neighborhood"].present > p { animation: fade-in 0.6s ease both; }
+.reveal #sheet-slide.present > .sheet-frame { animation: fade-in 0.45s ease both; }
+
+.reveal #totals-slide.present > table tr:nth-child(2) > * { animation-delay: 0.1s; }
+.reveal #totals-slide.present > table tr:nth-child(3) > * { animation-delay: 0.2s; }
+.reveal #totals-slide.present > table tr:nth-child(4) > * { animation-delay: 0.3s; }
+.reveal #totals-slide.present > table tr:nth-child(5) > * { animation-delay: 0.4s; }
+.reveal #totals-slide.present > p { animation: rise 0.4s ease 0.5s both; }
+
+.reveal section[data-title="Summary"].present > p { animation: rise 0.45s ease both; }
+.reveal section[data-title="Summary"].present > p:nth-of-type(2) { animation-delay: 0.15s; }
+.reveal section[data-title="Summary"].present > p:nth-of-type(3) { animation-delay: 0.3s; }
+
+.reveal section[data-title="Sources"].present li { animation: rise 0.45s ease both; }
+.reveal #thanks-slide.present > h2 { animation: title-in 0.45s ease both; }
+.reveal #thanks-slide.present > p { animation: title-in 0.45s ease 0.12s both; }
+
+.reveal .slides section.present > .code-panel pre {
+  animation: code-in 0.8s steps(8, end) both;
+}
+
+@keyframes title-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateX(-14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes flake {
+  from { transform: translate3d(0, -8px, 0); opacity: 0.15; }
+  to { transform: translate3d(12px, 46px, 0); opacity: 0.65; }
+}
+@keyframes glow {
+  0% { background-color: transparent; }
+  45% { background-color: color-mix(in srgb, var(--ok) 32%, var(--panel)); }
+  100% { background-color: var(--panel); }
+}
+@keyframes pop {
+  0% { transform: scale(0.86); }
+  55% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes soft-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+@keyframes code-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snow { display: none; }
+  .reveal .title-slide.present > h1,
+  .reveal .title-slide.present > h3,
+  .reveal .title-slide.present > p,
+  .reveal section[data-title="Problem"].present > table :is(th, td),
+  .reveal section[data-title="Mixes"].present > table :is(th, td),
+  .reveal section[data-title="Mixes"].present > table tr.best,
+  .reveal section[data-title="Inequalities"].present > p,
+  .reveal #planner-slide.present > h2,
+  .reveal #planner-slide.present > .small,
+  .reveal #recommendBtn,
+  .badge.pop,
+  .reveal section[data-title="Recommendation"].present > ul li,
+  .reveal section[data-title="Our Whitefish Neighborhood"].present > p,
+  .reveal #sheet-slide.present > .sheet-frame,
+  .reveal #totals-slide.present > table :is(th, td),
+  .reveal #totals-slide.present > p,
+  .reveal section[data-title="Summary"].present > p,
+  .reveal section[data-title="Sources"].present li,
+  .reveal #thanks-slide.present > h2,
+  .reveal #thanks-slide.present > p,
+  .reveal .slides section.present > .code-panel pre,
+  #scrollCue .chev,
+  .fill {
+    animation: none !important;
+    transition: none !important;
+    clip-path: none !important;
+  }
+}
 
 /* Author rules must not override the hidden attribute. */
 [hidden] { display: none !important; }

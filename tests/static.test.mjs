@@ -99,8 +99,9 @@ test("plain labels and the solution check stay on the slides", () => {
   assert.match(html, /\$20,000 less/);
   assert.match(html, /Press T to change colors/);
   assert.match(html, /Bad · Not enough energy/);
-  assert.match(planner, /badge\.textContent = "Great"/);
-  assert.match(planner, /badge\.textContent = "Good"/);
+  assert.match(planner, /paintBadge\("Great", "great"\)/);
+  assert.match(planner, /paintBadge\("Good", "good"\)/);
+  assert.match(planner, /badge\.textContent = label/);
   assert.match(planner, /Bad · Over budget/);
   assert.doesNotMatch(html, />Feasible</);
   assert.doesNotMatch(html, /42 g/);
@@ -145,6 +146,29 @@ test("draft material and the side list are gone", () => {
   assert.match(html, /id="scrollCue"/);
   assert.doesNotMatch(html, /id="settingsOpen"/);
   assert.match(html, /controls:\s*true/);
+});
+
+test("motion stays under a second and can be turned off", () => {
+  const css = read("deck.css");
+  const html = read("index.html");
+  const planner = read("planner.js");
+  assert.match(css, /@keyframes title-in/);
+  assert.match(css, /@keyframes flake/);
+  assert.match(css, /@keyframes rise/);
+  assert.match(css, /@keyframes glow/);
+  assert.match(css, /@keyframes pop/);
+  assert.match(css, /@keyframes soft-pulse/);
+  assert.match(css, /@keyframes code-in/);
+  assert.match(html, /class="snow" aria-hidden="true"/);
+  assert.match(html, /data-auto-animate/);
+  assert.match(html, /class="count-up"/);
+  assert.match(html, /autoAnimateDuration: 0\.6/);
+  assert.match(planner, /lineReveal/);
+  assert.match(planner, /prefers-reduced-motion/);
+  assert.match(planner, /function playSlideMotion/);
+  const times = [...css.matchAll(/(\d*\.?\d+)s/g)].map((match) => Number(match[1]));
+  assert.ok(times.length > 0);
+  for (const time of times) assert.ok(time < 1, "animation longer than 1s: " + time);
 });
 
 test("themes, lightbox, slide numbers, and direct-link settings exist", () => {
