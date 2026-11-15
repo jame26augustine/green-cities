@@ -42,6 +42,20 @@ let solarSlider, geoSlider, solarValue, geoValue, costText, energyText;
 let costBar, energyBar, badge, recommendBtn, canvas, ctx;
 let PAD, SCALE;               // graph layout numbers, set once canvas exists
 let started = false;          // so we only set things up one time
+let lineReveal = 1;           // 0 to 1 while the budget and energy lines draw
+let lineFrame = 0;
+let shadeCanvas = null;
+let shadeKey = "";
+let badgeLabel = "";
+const meter = {
+  cost: { value: null, token: 0 },
+  energy: { value: null, token: 0 }
+};
+let countToken = 0;
+
+function prefersReduced() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 // ----- 4. Update meters and badge -----
 function update() {
@@ -52,8 +66,8 @@ function update() {
 
   solarValue.textContent = x;
   geoValue.textContent = y;
-  costText.textContent = "$" + cost.toLocaleString("en-US");
-  energyText.textContent = energy.toLocaleString("en-US");
+  countMeter(costText, meter.cost, cost, "$");
+  countMeter(energyText, meter.energy, energy, "");
 
   // Bars fill as a percent (capped at 100%)
   costBar.style.width = Math.min(cost / BUDGET * 100, 100) + "%";
@@ -62,19 +76,10 @@ function update() {
   energyBar.classList.toggle("bad", !enoughEnergy(x, y));
 
   // Great is only 5 solar and 1 geothermal. Good is any other mix that works.
-  if (x === 5 && y === 1 && isFeasible(x, y)) {
-    badge.textContent = "Great";
-    badge.className = "badge great";
-  } else if (isFeasible(x, y)) {
-    badge.textContent = "Good";
-    badge.className = "badge good";
-  } else if (!inBudget(x, y)) {
-    badge.textContent = "Bad · Over budget";
-    badge.className = "badge bad";
-  } else {
-    badge.textContent = "Bad · Not enough energy";
-    badge.className = "badge short";
-  }
+  if (x === 5 && y === 1 && isFeasible(x, y)) paintBadge("Great", "great");
+  else if (isFeasible(x, y)) paintBadge("Good", "good");
+  else if (!inBudget(x, y)) paintBadge("Bad · Over budget", "bad");
+  else paintBadge("Bad · Not enough energy", "short");
 
   drawGraph(x, y);
 }
@@ -100,6 +105,53 @@ function line(x1, y1, x2, y2, color, width) {
   ctx.stroke();
 }
 
+// Draw the start of a line. t = 1 draws the whole segment.
+function linePart(x1, y1, x2, y2, color, width, t) {
+  const amount = Math.max(0, Math.min(1, t));
+  line(x1, y1, x1 + (x2 - x1) * amount, y1 + (y2 - y1) * amount, color, width);
+}
+
+function countMeter(el, slot, next, prefix) {
+  const text = prefix + next.toLocaleString("en-US");
+  if (slot.value === next) {
+    el.textContent = text;
+    return;
+  }
+  const from = slot.value;
+  if (from === null || prefersReduced()) {
+    slot.value = next;
+    el.textContent = text;
+    return;
+  }
+  const token = ++slot.token;
+  const start = performance.now();
+  function frame(now) {
+    if (token !== slot.token) return;
+    const t = Math.min(1, (now - start) / 450);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const value = Math.round(from + (next - from) * eased);
+    slot.value = value;
+    el.textContent = prefix + value.toLocaleString("en-US");
+    if (t < 1) requestAnimationFrame(frame);
+    else {
+      slot.value = next;
+      el.textContent = text;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function paintBadge(label, kind) {
+  const changed = badgeLabel !== "" && badgeLabel !== label;
+  badgeLabel = label;
+  badge.textContent = label;
+  badge.className = "badge " + kind;
+  if (changed && !prefersReduced()) {
+    void badge.offsetWidth;
+    badge.classList.add("pop");
+  }
+}
+
 // Draw a filled circle at a graph point
 function dot(x, y, radius, fill, outline) {
   const [px, py] = toPx(x, y);
@@ -123,8 +175,32 @@ function readGraphColors() {
   COLORS.outline = pick("--graph-outline", "#0b1f3a");
 }
 
+function paintShade() {
+  const key = document.documentElement.dataset.theme || "whitefish";
+  if (shadeCanvas && shadeKey === key) return;
+  shadeKey = key;
+  shadeCanvas = document.createElement("canvas");
+  shadeCanvas.width = canvas.width;
+  shadeCanvas.height = canvas.height;
+  const prev = ctx;
+  ctx = shadeCanvas.getContext("2d");
+  readGraphColors();
+  ctx.fillStyle = COLORS.region;
+  const step = 0.02;
+  for (let gx = 0; gx < MAX_UNITS; gx += step) {
+    for (let gy = 0; gy < MAX_UNITS; gy += step) {
+      if (isFeasible(gx + step / 2, gy + step / 2)) {
+        const [px, py] = toPx(gx, gy + step);
+        ctx.fillRect(px, py, step * SCALE + 0.5, step * SCALE + 0.5);
+      }
+    }
+  }
+  ctx = prev;
+}
+
 function drawGraph(curX, curY) {
   readGraphColors();
+  paintShade();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Grid lines and numbers
@@ -147,36 +223,38 @@ function drawGraph(curX, curY) {
   ctx.fillText("y = geothermal units", 0, 0);
   ctx.restore();
 
-  // Shade the feasible region: color every tiny cell whose
-  // center makes both inequalities true. Simple and accurate!
-  ctx.fillStyle = COLORS.region;
-  const step = 0.02;
-  for (let gx = 0; gx < MAX_UNITS; gx += step) {
-    for (let gy = 0; gy < MAX_UNITS; gy += step) {
-      if (isFeasible(gx + step / 2, gy + step / 2)) {
-        const [px, py] = toPx(gx, gy + step);
-        ctx.fillRect(px, py, step * SCALE + 0.5, step * SCALE + 0.5);
-      }
-    }
-  }
+  // Shade the feasible region. It is the same for every slider
+  // position, so it is painted once and faded in with the lines.
+  ctx.save();
+  ctx.globalAlpha = lineReveal;
+  ctx.drawImage(shadeCanvas, 0, 0);
+  ctx.restore();
 
   // Budget line: 30000x + 50000y = 200000 -> (0, 4) to (6.67, 0)
-  line(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, COLORS.budget, 2);
+  linePart(0, BUDGET / GEO_COST, BUDGET / SOLAR_COST, 0, COLORS.budget, 2, lineReveal);
   // Energy line: 1100x + 1500y = 6000 -> (0, 4) to (5.45, 0)
-  line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 2);
-  ctx.fillStyle = COLORS.budget;
-  ctx.fillText("Budget line", ...offset(toPx(5.2, 1.3)));
-  ctx.fillStyle = COLORS.energy;
-  // Keep the words in the open space under the energy line.
-  // Farther right, the line drops and would run through the text.
-  ctx.fillText("Energy line", ...offset(toPx(1.55, 0.9), 0));
+  linePart(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 2, lineReveal);
+  if (lineReveal > 0.72) {
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, (lineReveal - 0.72) / 0.28);
+    ctx.fillStyle = COLORS.budget;
+    ctx.fillText("Budget line", ...offset(toPx(5.2, 1.3)));
+    ctx.fillStyle = COLORS.energy;
+    // Keep the words in the open space under the energy line.
+    // Farther right, the line drops and would run through the text.
+    ctx.fillText("Energy line", ...offset(toPx(1.55, 0.9), 0));
+    ctx.restore();
+  }
 
   // Dots for every whole-number feasible mix
+  ctx.save();
+  ctx.globalAlpha = lineReveal;
   for (let x = 0; x <= MAX_UNITS; x++) {
     for (let y = 0; y <= MAX_UNITS; y++) {
       if (isFeasible(x, y)) dot(x, y, 5, COLORS.point);
     }
   }
+  ctx.restore();
 
   // Highlight the current slider choice
   dot(curX, curY, 9, COLORS.current, COLORS.outline);
@@ -221,5 +299,58 @@ function startPlanner() {
     if (started) update();
   });
 
+  lineReveal = prefersReduced() ? 1 : 0;
   update();   // draw the first picture
+  if (lineReveal < 1) runLineReveal();
+}
+
+function runLineReveal() {
+  const token = ++lineFrame;
+  const start = performance.now();
+  function frame(now) {
+    if (token !== lineFrame) return;
+    lineReveal = Math.min(1, (now - start) / 700);
+    drawGraph(Number(solarSlider.value), Number(geoSlider.value));
+    if (lineReveal < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function restoreCounts() {
+  document.querySelectorAll(".count-up").forEach((el) => {
+    const original = el.getAttribute("data-final");
+    if (original) el.textContent = original;
+  });
+}
+
+// Count the recommendation figures when that slide is showing.
+function playSlideMotion(slide) {
+  restoreCounts();
+  const token = ++countToken;
+  if (!slide || prefersReduced()) return;
+  const nodes = slide.querySelectorAll(".count-up");
+  if (!nodes.length) return;
+  nodes.forEach((el) => {
+    if (!el.getAttribute("data-final")) el.setAttribute("data-final", el.textContent);
+  });
+  const start = performance.now();
+  function frame(now) {
+    if (token !== countToken) return;
+    if (!slide.classList.contains("present")) {
+      restoreCounts();
+      return;
+    }
+    const t = Math.min(1, (now - start) / 700);
+    const eased = 1 - Math.pow(1 - t, 3);
+    nodes.forEach((el) => {
+      const original = el.getAttribute("data-final");
+      const match = original.match(/[\d,]+/);
+      if (!match) return;
+      const target = Number(match[0].replace(/,/g, ""));
+      if (t >= 1) el.textContent = original;
+      else el.textContent = original.replace(match[0], Math.round(target * eased).toLocaleString("en-US"));
+    });
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }

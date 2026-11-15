@@ -49,7 +49,10 @@ const boot = await page.evaluate(() => ({
   sideNav: document.querySelectorAll("#sideNav, #navToggle").length,
   draftLabels: document.querySelectorAll(".corner-badge, .wip-tag").length,
   revealLeft: document.querySelector(".reveal").getBoundingClientRect().left,
-  lightbox: !!document.getElementById("lightbox")
+  lightbox: !!document.getElementById("lightbox"),
+  auto: Reveal.getConfig().autoAnimateDuration,
+  snow: !!document.querySelector(".title-slide .snow[aria-hidden='true']"),
+  title: document.querySelector(".title-slide h1")?.textContent || ""
 }));
 check("deck is visible without a gate", !boot.locked && !boot.gate && boot.visible !== "hidden", JSON.stringify(boot));
 check("keyboard and touch are on", boot.keyboard === true && boot.touch === true, JSON.stringify(boot));
@@ -57,6 +60,7 @@ check("slide number is visible", /Slide \d+ of \d+/.test(boot.number), boot.numb
 check("sidebar and draft labels are absent", boot.sideNav === 0 && boot.draftLabels === 0, JSON.stringify(boot));
 check("slides are not shifted aside for a side list", boot.revealLeft < 40, JSON.stringify(boot));
 check("zoom lightbox is gone", boot.lightbox === false, JSON.stringify(boot));
+check("title motion is short and the words are unchanged", boot.auto < 1 && boot.snow && boot.title === "Green Cities ❄ 𖤓", JSON.stringify(boot));
 
 await page.keyboard.press("ArrowRight");
 await page.waitForFunction(() => /The Problem/.test(Reveal.getCurrentSlide()?.innerText || ""));

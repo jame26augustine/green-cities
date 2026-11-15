@@ -99,13 +99,23 @@ test("plain labels and the solution check stay on the slides", () => {
   assert.match(html, /\$20,000 less/);
   assert.match(html, /Press T to change colors/);
   assert.match(html, /Bad · Not enough energy/);
-  assert.match(planner, /badge\.textContent = "Great"/);
-  assert.match(planner, /badge\.textContent = "Good"/);
+  assert.match(planner, /paintBadge\("Great", "great"\)/);
+  assert.match(planner, /paintBadge\("Good", "good"\)/);
+  assert.match(planner, /badge\.textContent = label/);
   assert.match(planner, /Bad · Over budget/);
   assert.doesNotMatch(html, />Feasible</);
   assert.doesNotMatch(html, /42 g/);
-  assert.doesNotMatch(html, /EIA|Ember|Alliance for Innovation/);
+  assert.doesNotMatch(html, /Ember/);
   assert.doesNotMatch(html, /820/);
+  assert.match(html, /My plan makes about 0\.3 tons of CO2 a month/);
+  assert.match(html, /The same 7,000 kWh from coal would make about 7\.3 tons/);
+  assert.match(html, /So my plan makes about 24 times less pollution/);
+  assert.match(html, /The coal row in the pounds per kWh column is "2\.31"/);
+  assert.match(html, /The lifecycle emissions of Solar equal 43 grams of carbon dioxide equivalent per kWh and it has a median levelized cost of \$53\.8\/MWh\./);
+  assert.match(html, /The lifecycle emissions of Geothermal equal 37 grams of carbon dioxide equivalent per kWh and it has a levelized cost of \$248\.8\/MWh\./);
+  assert.match(html, /My plan fits the budget, makes enough energy, and makes far less pollution than coal/);
+  assert.match(html, /eia\.gov\/tools\/faqs\/faq\.php\?id=74/);
+  assert.match(html, /2024-Energy-Spotlights\.pdf/);
   assert.doesNotMatch(html, /id="settingsDialog"/);
   assert.doesNotMatch(html, /id="settingsOpen"/);
   assert.doesNotMatch(planner, /toPx\(1\.2, 2\.6\), -80/);
@@ -145,6 +155,29 @@ test("draft material and the side list are gone", () => {
   assert.match(html, /id="scrollCue"/);
   assert.doesNotMatch(html, /id="settingsOpen"/);
   assert.match(html, /controls:\s*true/);
+});
+
+test("motion stays under a second and can be turned off", () => {
+  const css = read("deck.css");
+  const html = read("index.html");
+  const planner = read("planner.js");
+  assert.match(css, /@keyframes title-in/);
+  assert.match(css, /@keyframes flake/);
+  assert.match(css, /@keyframes rise/);
+  assert.match(css, /@keyframes glow/);
+  assert.match(css, /@keyframes pop/);
+  assert.match(css, /@keyframes soft-pulse/);
+  assert.match(css, /@keyframes code-in/);
+  assert.match(html, /class="snow" aria-hidden="true"/);
+  assert.match(html, /data-auto-animate/);
+  assert.match(html, /class="count-up"/);
+  assert.match(html, /autoAnimateDuration: 0\.6/);
+  assert.match(planner, /lineReveal/);
+  assert.match(planner, /prefers-reduced-motion/);
+  assert.match(planner, /function playSlideMotion/);
+  const times = [...css.matchAll(/(\d*\.?\d+)s/g)].map((match) => Number(match[1]));
+  assert.ok(times.length > 0);
+  for (const time of times) assert.ok(time < 1, "animation longer than 1s: " + time);
 });
 
 test("themes, lightbox, slide numbers, and direct-link settings exist", () => {
