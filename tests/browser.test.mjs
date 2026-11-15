@@ -77,9 +77,14 @@ const totalsText = await page.$eval("#totals-slide", (el) => el.innerText);
 check("down enters the solution check", /5 × 1,100 \+ 1 × 1,500 = 7,000 kWh/.test(totalsText), totalsText.slice(0, 120));
 check("both inequalities are checked at (5, 1)", /200,000 ≤ 200,000/.test(totalsText) && /7,000 ≥ 6,000/.test(totalsText), totalsText.slice(0, 240));
 
+await page.keyboard.press("ArrowDown");
+await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "emissions-slide");
+const emissionsText = await page.$eval("#emissions-slide", (el) => el.innerText);
+check("down enters the emissions comparison", /7,000 × 42 g = 294,000 g/.test(emissionsText) && /about 7\.3 metric tons/.test(emissionsText), emissionsText.slice(0, 200));
+
 const beforeRight = await indices(page);
 await page.keyboard.press("ArrowRight");
-await page.waitForFunction(() => /Summary/.test(Reveal.getCurrentSlide()?.innerText || ""));
+await page.waitForFunction(() => /Takeaway/.test(Reveal.getCurrentSlide()?.innerText || ""));
 const afterRight = await indices(page);
 check("right leaves the stack for the next section", afterRight.h === beforeRight.h + 1 && afterRight.v === 0, JSON.stringify({ beforeRight, afterRight }));
 

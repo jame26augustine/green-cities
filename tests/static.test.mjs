@@ -52,6 +52,7 @@ test("sheet stack, solution check, and real code excerpts", () => {
   const nav = read("deck-nav.js");
   assert.match(html, /id="sheet-slide"/);
   assert.match(html, /id="totals-slide"/);
+  assert.match(html, /id="emissions-slide"/);
   assert.match(html, /id="thanks-slide"/);
   assert.doesNotMatch(html, /id="backup-slide"/);
   assert.doesNotMatch(html, /sheet-backup/);
@@ -68,6 +69,18 @@ test("sheet stack, solution check, and real code excerpts", () => {
   assert.match(planner, /function inBudget\(x, y\)/);
   assert.match(html, /BUDGET \/ SOLAR_COST/);
   assert.match(planner, /BUDGET \/ SOLAR_COST/);
+});
+
+test("slides keep a clear speakable path", () => {
+  const html = read("index.html");
+  assert.match(html, /How many solar systems and geothermal units should the town buy\?/);
+  assert.match(html, /class="constrains"/);
+  assert.match(html, /Our Choice: \(5, 1\)/);
+  assert.match(html, /Check \(5, 1\) Against the Inequalities/);
+  assert.match(html, /Emissions for the Same 7,000 kWh/);
+  assert.match(html, /Town Hall line/);
+  assert.doesNotMatch(html, /← → change sections/);
+  assert.doesNotMatch(html, /Green Cities ❄/);
 });
 
 test("rubric lines are visible and the coal number is corrected", () => {

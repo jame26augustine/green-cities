@@ -128,6 +128,68 @@ input[type="range"] { width: 100%; accent-color: var(--sky); }
 .reveal td.ok { color: var(--ok); font-weight: 700; }
 .reveal td.no { color: var(--short); font-weight: 700; }
 
+/* Speakable layout helpers: one idea per block, readable from the room */
+.reveal .lead-q {
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--ice);
+  margin: 0.35em 0 0.6em;
+}
+.reveal .constrains {
+  list-style: none;
+  margin: 0.6em 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35em;
+}
+.reveal .constrains li {
+  font-size: 0.78em;
+  padding: 0.35em 0.7em;
+  border-left: 5px solid var(--sky);
+  background: var(--panel);
+}
+.reveal .ineq-block {
+  margin: 0.55em 0;
+  padding: 0.45em 0.7em;
+  background: var(--panel);
+  border-left: 5px solid var(--blue);
+}
+.reveal .ineq-block code { display: inline-block; margin-top: 0.25em; }
+.reveal .graph-key {
+  font-size: 0.62em;
+  color: var(--muted);
+  margin: 0 0 0.5em;
+}
+.reveal .choice-line {
+  font-size: 0.9em;
+  margin: 0.2em 0 0.7em;
+}
+.reveal .reasons {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 0.78em;
+  line-height: 1.45;
+}
+.reveal .reasons li { margin: 0.4em 0; }
+.reveal .check-line {
+  font-size: 0.72em;
+  margin: 0.45em 0;
+  line-height: 1.35;
+}
+.reveal .town-hall {
+  margin-top: 0.8em;
+  padding: 0.55em 0.75em;
+  background: var(--panel);
+  border-left: 5px solid var(--ok);
+  font-size: 0.85em;
+}
+.reveal ul.sources {
+  text-align: left;
+  font-size: 0.58em;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 /* ----- 6. Themes -----
    Whitefish is the original blue deck (:root above).
    The other themes only swap colors. */
