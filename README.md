@@ -8,21 +8,21 @@ reveal.js 6.0.2 is saved in `vendor/`, so the deck works without internet. The l
 - `←` and `→` change sections, including the last section, which continues downward.
 - `↓`, the Scroll down button, a vertical swipe, and the mouse wheel move down inside a stack. They do not skip to the next section.
 - Space and `N` move forward, including down a stack, and then on to the next section.
-- Slide numbers sit at the lower right (`8.2 · 9/15`).
+- The slide count sits at the bottom center, like `Slide 4 of 15`, and it counts slides lower in a section too.
 - Scrolling inside a code box stays in that box. Scrolling inside the Google Sheet stays in the sheet.
-- Click or tap a picture to enlarge it. Close with Escape, the Close button, or the dark backdrop.
 - Press T to change colors. The choices are Whitefish, Night, Pine, and Signal. The choice stays in this browser.
+- The neighborhood clip is `images/city-animation.mp4`, next to `index.html`, so GitHub Pages can play it.
 
 ## Files
 - `index.html` has the slides. A section inside a section is a vertical stack.
 - `deck.css` holds the Whitefish colors, the Night, Pine, and Signal themes, and the planner layout
 - `planner.js` is the interactive slide (same cost and energy math as the starter site)
 - `deck-nav.js` decides whether a wheel event changes slides
-- `deck-ui.js` builds settings, the lightbox, and the scroll cue
+- `deck-ui.js` switches colors and builds the scroll cue
 - `vendor/` contains the reveal.js library files (MIT license)
 
 ## Checks
-`npm test` runs the file checks. `npm run test:browser` opens the deck in Chrome and clicks through navigation, settings, and the lightbox.
+`npm test` runs the file checks. `npm run test:browser` opens the deck in Chrome and clicks through navigation, colors, and the neighborhood clip.
 
 ## Host it free on GitHub Pages
 1. Create a public repo named `green-cities` on github.com.

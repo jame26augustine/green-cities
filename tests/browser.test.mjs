@@ -49,14 +49,14 @@ const boot = await page.evaluate(() => ({
   sideNav: document.querySelectorAll("#sideNav, #navToggle").length,
   draftLabels: document.querySelectorAll(".corner-badge, .wip-tag").length,
   revealLeft: document.querySelector(".reveal").getBoundingClientRect().left,
-  lightboxCloseHit: document.elementFromPoint(1400, 30)?.id === "lightboxClose"
+  lightbox: !!document.getElementById("lightbox")
 }));
 check("deck is visible without a gate", !boot.locked && !boot.gate && boot.visible !== "hidden", JSON.stringify(boot));
 check("keyboard and touch are on", boot.keyboard === true && boot.touch === true, JSON.stringify(boot));
-check("slide number is visible", /\d+\s*·\s*\d+\/\d+/.test(boot.number), boot.number);
+check("slide number is visible", /Slide \d+ of \d+/.test(boot.number), boot.number);
 check("sidebar and draft labels are absent", boot.sideNav === 0 && boot.draftLabels === 0, JSON.stringify(boot));
 check("slides are not shifted aside for a side list", boot.revealLeft < 40, JSON.stringify(boot));
-check("lightbox close stays off the slides until an image opens", boot.lightboxCloseHit === false, JSON.stringify(boot));
+check("zoom lightbox is gone", boot.lightbox === false, JSON.stringify(boot));
 
 await page.keyboard.press("ArrowRight");
 await page.waitForFunction(() => /The Problem/.test(Reveal.getCurrentSlide()?.innerText || ""));
@@ -75,6 +75,8 @@ await page.keyboard.press("ArrowDown");
 await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === "totals-slide");
 const totalsText = await page.$eval("#totals-slide", (el) => el.innerText);
 check("down enters the solution check", /5 × 1,100 \+ 1 × 1,500 = 7,000 kWh/.test(totalsText), totalsText.slice(0, 120));
+const lowerCount = await page.$eval(".slide-number", (el) => el.innerText);
+check("counter counts a lower slide", /Slide \d+ of \d+/.test(lowerCount) && lowerCount !== boot.number, lowerCount);
 check("both inequalities are checked at (5, 1)", /200,000 ≤ 200,000/.test(totalsText) && /7,000 ≥ 6,000/.test(totalsText), totalsText.slice(0, 240));
 
 const beforeRight = await indices(page);
@@ -168,33 +170,37 @@ await page.reload({ waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.Reveal && Reveal.isReady());
 
 await page.evaluate(() => {
-  const el = document.querySelector('[data-title="Design map"]');
+  const el = document.querySelector("#cityAnimation").closest("section");
   const index = Reveal.getIndices(el);
   Reveal.slide(index.h, index.v);
 });
-await page.waitForSelector("#designMapZoom");
-await page.click("#designMapZoom");
-await page.waitForSelector("#lightbox[open]");
-const lightFocus = await page.evaluate(() => document.activeElement?.id);
-check("lightbox focuses the close control", lightFocus === "lightboxClose", lightFocus);
-await page.keyboard.press("Escape");
-await page.waitForFunction(() => !document.getElementById("lightbox").open);
-const focusBack = await page.evaluate(() => document.activeElement?.id);
-check("escape closes the lightbox and returns focus", focusBack === "designMapZoom", focusBack);
-
-await page.click("#designMapZoom");
-await page.waitForSelector("#lightbox[open]");
-await page.evaluate(() => {
-  document.getElementById("lightbox").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+const clip = await page.evaluate(async () => {
+  const video = document.getElementById("cityAnimation");
+  const file = await fetch(video.getAttribute("src"));
+  const type = file.headers.get("content-type") || "";
+  if (video.paused) {
+    video.muted = true;
+    await video.play().catch(() => {});
+  }
+  await new Promise((resolve) => {
+    if (video.currentTime > 0) resolve();
+    else video.addEventListener("timeupdate", () => resolve(), { once: true });
+  });
+  return {
+    status: file.status,
+    type: type,
+    muted: video.muted,
+    loop: video.loop,
+    autoplay: video.autoplay,
+    inline: video.playsInline,
+    poster: video.getAttribute("poster"),
+    src: video.getAttribute("src"),
+    time: video.currentTime,
+    height: video.clientHeight,
+    title: video.closest("section").querySelector("h2").innerText
+  };
 });
-await page.waitForFunction(() => !document.getElementById("lightbox").open);
-check("backdrop click closes the lightbox", true);
-
-await page.click("#designMapZoom");
-await page.waitForSelector("#lightbox[open]");
-await page.click("#lightboxClose");
-await page.waitForFunction(() => !document.getElementById("lightbox").open);
-check("close button closes the lightbox", true);
+check("neighborhood clip plays from this folder", clip.status === 200 && /video\/mp4/.test(clip.type) && clip.muted && clip.loop && clip.autoplay && clip.inline && clip.time > 0 && clip.height > 80 && clip.height <= 400 && clip.src === "images/city-animation.mp4" && clip.poster === "images/city-animation-poster.jpg" && clip.title === "Our Whitefish Neighborhood", JSON.stringify(clip));
 
 await go(page, "planner-slide");
 await page.click("#recommendBtn");

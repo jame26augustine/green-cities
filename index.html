@@ -22,11 +22,6 @@
 <body>
   <button type="button" id="scrollCue" hidden>Scroll down <span class="chev" aria-hidden="true">↓</span></button>
 
-  <dialog id="lightbox" aria-label="Enlarged image">
-    <button type="button" id="lightboxClose" data-close>Close</button>
-    <img id="lightboxImg" alt="">
-  </dialog>
-
   <!-- Reveal looks for .reveal > .slides > section. Each <section> is one slide.
        A section that contains sections is a horizontal slide with vertical slides under it. -->
   <div class="reveal">
@@ -105,11 +100,10 @@
         </ul>
       </section>
 
-      <section data-title="Design map">
-        <h2>Design Map · Whitefish Grid</h2>
-        <button type="button" class="zoom-hit" id="designMapZoom" aria-label="Enlarge the design map">
-          <img src="images/design-map.png" alt="Whitefish Green Energy Grid diagram with 5 solar, 1 geothermal, and the neighborhood">
-        </button>
+      <section data-title="Our Whitefish Neighborhood">
+        <h2>Our Whitefish Neighborhood</h2>
+        <video id="cityAnimation" class="city-animation" src="images/city-animation.mp4" poster="images/city-animation-poster.jpg" muted loop autoplay playsinline preload="auto"></video>
+        <p>Rooftop solar makes daytime power, and geothermal keeps homes warm in winter.</p>
       </section>
 
       <!-- Vertical stack: Google Sheet, then the check of (5, 1). -->
@@ -252,24 +246,36 @@ line(0, ENERGY_GOAL / GEO_ENERGY, ENERGY_GOAL / SOLAR_ENERGY, 0, COLORS.energy, 
       transition: "slide",
       transitionSpeed: "fast",
       slideNumber: function (slide) {
-        const index = Reveal.getIndices(slide);
-        const past = Reveal.getSlidePastCount(slide) + 1;
-        const total = Reveal.getTotalSlides();
-        const label = Reveal.isVerticalSlide(slide)
-          ? (index.h + 1) + "." + (index.v + 1)
-          : String(index.h + 1);
-        return [label + " · " + past + "/" + total];
+        return ["Slide " + (Reveal.getSlidePastCount(slide) + 1), " of ", Reveal.getTotalSlides()];
       }
     });
 
     function maybeStartPlanner() {
       if (Reveal.getCurrentSlide() && Reveal.getCurrentSlide().id === "planner-slide") startPlanner();
     }
+    // The clip lives in this folder, so GitHub Pages can play it.
+    // Reveal hides other slides, so play only when this one is showing.
+    function playNeighborhood() {
+      var video = document.getElementById("cityAnimation");
+      if (!video) return;
+      video.muted = true;
+      var slide = video.closest("section");
+      if (slide && slide.classList.contains("present")) {
+        var pending = video.play();
+        if (pending && pending.catch) pending.catch(function () {});
+      } else {
+        video.pause();
+      }
+    }
     Reveal.on("ready", function () {
       DeckUI.mount();
       maybeStartPlanner();
+      playNeighborhood();
     });
-    Reveal.on("slidechanged", maybeStartPlanner);
+    Reveal.on("slidechanged", function () {
+      maybeStartPlanner();
+      playNeighborhood();
+    });
   </script>
 </body>
 </html>

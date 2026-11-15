@@ -1,5 +1,5 @@
 // deck-ui.js
-// Themes, the scroll cue, and the image lightbox.
+// Themes and the scroll cue.
 // Press T to cycle colors. Wheel decisions live in deck-nav.js.
 
 (function () {
@@ -90,46 +90,6 @@
     cue.hidden = !down;
   }
 
-  function openDialog(dialog, opener) {
-    dialog.dataset.openerId = opener && opener.id ? opener.id : "";
-    document.documentElement.classList.add("ui-open");
-    dialog.showModal();
-    var closeButton = dialog.querySelector("[data-close]");
-    if (closeButton) closeButton.focus();
-  }
-
-  function bindDialog(dialog) {
-    dialog.addEventListener("close", function () {
-      if (!document.querySelector("dialog[open]")) {
-        document.documentElement.classList.remove("ui-open");
-      }
-      var opener = dialog.dataset.openerId && document.getElementById(dialog.dataset.openerId);
-      if (opener) opener.focus();
-    });
-    dialog.addEventListener("click", function (event) {
-      if (event.target === dialog) dialog.close();
-    });
-    dialog.querySelectorAll("[data-close]").forEach(function (button) {
-      button.addEventListener("click", function () { dialog.close(); });
-    });
-  }
-
-  function setupLightbox() {
-    var dialog = document.getElementById("lightbox");
-    var view = document.getElementById("lightboxImg");
-    bindDialog(dialog);
-    document.addEventListener("click", function (event) {
-      var hit = event.target.closest && event.target.closest(".zoom-hit");
-      if (!hit || hit.hidden) return;
-      var img = hit.querySelector("img");
-      if (!img || !img.getAttribute("src") || img.naturalWidth === 0) return;
-      event.preventDefault();
-      view.src = img.currentSrc || img.src;
-      view.alt = img.alt || "Enlarged image";
-      openDialog(dialog, hit);
-    });
-  }
-
   function onThemeKey(event) {
     if (event.key !== "t" && event.key !== "T") return;
     if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -143,7 +103,6 @@
   function mount() {
     var settings = load();
     apply(settings);
-    setupLightbox();
     updateCue();
 
     document.getElementById("scrollCue").addEventListener("click", function () {
