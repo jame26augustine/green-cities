@@ -22,12 +22,7 @@
   <link rel="stylesheet" href="deck.css">
 </head>
 <body>
-  <!-- Corner badge shown on every slide. It sits outside .reveal so it never scales or moves. -->
-  <div class="corner-badge">DRAFT</div>
-
   <button type="button" id="settingsOpen" class="chrome-btn">Settings</button>
-  <button type="button" id="navToggle" class="chrome-btn" aria-expanded="false" aria-controls="sideNav">Slides</button>
-  <nav id="sideNav" class="scroll-panel" aria-label="Slides" data-prevent-swipe></nav>
   <button type="button" id="scrollCue" hidden>Scroll down <span class="chev" aria-hidden="true">↓</span></button>
   <p id="mathHelpBar" hidden>
     <b>Layout:</b> x = 10 kW solar systems, y = geothermal units.
@@ -78,35 +73,40 @@
     <div class="slides">
 
       <section class="title-slide" data-title="Title">
-        <p class="wip-tag">Draft · Working on it</p>
-        <h1>Green Cities ❄ 𖤓</h1>
+        <h1>Green Cities</h1>
         <h3>Powering Whitefish, Montana</h3>
-        <p>Solar + geothermal energy with a system of linear inequalities</p>
-        <p class="small">James A· Algebra · ← → change sections · ↓ or scroll moves down a stack</p>
+        <p>Choose a solar + geothermal mix with a system of linear inequalities</p>
+        <p class="small">James A · Algebra 1</p>
       </section>
 
       <section data-title="Problem">
         <h2>The Problem</h2>
-        <p>Whitefish wants clean power for a neighborhood grid. How many solar systems and geothermal units should it buy?</p>
+        <p>Whitefish wants clean power for a neighborhood grid.</p>
+        <p class="lead-q">How many solar systems and geothermal units should the town buy?</p>
         <table>
-          <tr><th>Variable</th><th>Unit</th><th>Cost</th><th>Energy</th></tr>
-          <tr><td><b>x</b></td><td>Solar system, 10 kW</td><td>$30,000</td><td>1,100 kWh/mo</td></tr>
-          <tr><td><b>y</b></td><td>Geothermal unit</td><td>$50,000</td><td>1,500 kWh/mo</td></tr>
+          <tr><th>Variable</th><th>What it means</th><th>Cost</th><th>Energy</th></tr>
+          <tr><td><b>x</b></td><td>One solar system (10 kW), not one panel</td><td>$30,000</td><td>1,100 kWh/mo</td></tr>
+          <tr><td><b>y</b></td><td>One geothermal unit</td><td>$50,000</td><td>1,500 kWh/mo</td></tr>
         </table>
-        <p class="small">x is one solar system, not one panel. Budget: $200,000 · Goal: at least 6,000 kWh/month</p>
+        <ul class="constrains">
+          <li><b>Budget:</b> spend at most <b>$200,000</b></li>
+          <li><b>Energy:</b> make at least <b>6,000 kWh/month</b></li>
+        </ul>
       </section>
 
       <section data-title="Inequalities">
         <h2>The Inequalities</h2>
-        <p class="fragment"><b>Budget:</b> <code>30000x + 50000y ≤ 200000</code><br>
-          <span class="small">spend no more than $200k</span></p>
-        <p class="fragment"><b>Energy:</b> <code>1100x + 1500y ≥ 6000</code><br>
-          <span class="small">make at least 6,000 kWh each month</span></p>
-        <p class="fragment"><b>Also:</b> <code>x ≥ 0, y ≥ 0</code>, whole numbers only</p>
+        <p class="ineq-block"><b>Budget</b> — do not spend more than $200,000<br>
+          <code>30000x + 50000y ≤ 200000</code></p>
+        <p class="ineq-block"><b>Energy</b> — make at least 6,000 kWh each month<br>
+          <code>1100x + 1500y ≥ 6000</code></p>
+        <p><code>x ≥ 0</code> and <code>y ≥ 0</code>. You cannot buy a negative amount.</p>
+        <p>x and y are whole numbers. You cannot buy part of a system.</p>
       </section>
 
       <section id="planner-slide" data-title="Try it">
         <h2>Try It Yourself</h2>
+        <p class="graph-key">The blue shade meets both inequalities. Blue dots are whole-number answers. Green is (5, 1).</p>
         <div class="planner">
           <div class="panel">
             <label>Solar systems (x): <span id="solarValue">5</span>
@@ -118,7 +118,7 @@
             <p>Energy: <span id="energyText">7,000</span> / 6,000 kWh</p>
             <div class="bar"><div id="energyBar" class="fill"></div></div>
             <p>Status: <span id="badge" class="badge">✓ Feasible</span></p>
-            <button type="button" id="recommendBtn">Recommended: 5 solar systems + 1 geothermal</button>
+            <button type="button" id="recommendBtn">Jump to recommended: 5 solar + 1 geothermal</button>
             <p class="small">Each solar system is 10 kW. The sliders do not count single panels.</p>
           </div>
           <canvas id="graph" width="500" height="500"></canvas>
@@ -127,102 +127,97 @@
 
       <section data-title="Mixes">
         <h2>Mixes Compared</h2>
-        <p class="small">x = solar systems (10 kW each). y = geothermal units.</p>
+        <p class="small">x = solar systems (10 kW each). y = geothermal units. Energy is kWh per month.</p>
         <table class="mixes">
-          <tr><th>Mix (x, y)</th><th>Cost</th><th>Energy</th><th>Result</th></tr>
-          <tr><td>(6, 0)</td><td>$180,000</td><td>6,600</td><td class="ok">Feasible</td></tr>
-          <tr class="best"><td>(5, 1) ⭐</td><td>$200,000</td><td>7,000</td><td class="ok">Feasible</td></tr>
-          <tr><td>(3, 2)</td><td>$190,000</td><td>6,300</td><td class="ok">Feasible</td></tr>
-          <tr><td>(0, 4)</td><td>$200,000</td><td>6,000</td><td class="ok">Feasible</td></tr>
-          <tr><td>(5, 0)</td><td>$150,000</td><td>5,500</td><td class="no">Not enough energy</td></tr>
-          <tr><td>(4, 1)</td><td>$170,000</td><td>5,900</td><td class="no">Not enough energy</td></tr>
+          <tr><th>Mix (x, y)</th><th>Cost</th><th>Energy (kWh/mo)</th><th>Result</th></tr>
+          <tr><td>(6, 0)</td><td>$180,000</td><td>6,600</td><td class="ok">Works</td></tr>
+          <tr class="best"><td>(5, 1) · best</td><td>$200,000</td><td>7,000</td><td class="ok">Works</td></tr>
+          <tr><td>(3, 2)</td><td>$190,000</td><td>6,300</td><td class="ok">Works</td></tr>
+          <tr><td>(0, 4)</td><td>$200,000</td><td>6,000</td><td class="ok">Works</td></tr>
+          <tr><td>(5, 0)</td><td>$150,000</td><td>5,500</td><td class="no">Short on energy</td></tr>
+          <tr><td>(4, 1)</td><td>$170,000</td><td>5,900</td><td class="no">Short on energy</td></tr>
         </table>
       </section>
 
       <section data-title="Recommendation">
-        <h2>Recommendation: 5 Solar Systems + 1 Geothermal</h2>
-        <p><b>$200,000</b> · <b>7,000 kWh/month</b></p>
-        <ul>
-          <li class="fragment">Most energy of any feasible mix, 1,000 kWh over the goal</li>
-          <li class="fragment">Uses the whole budget, with nothing wasted</li>
-          <li class="fragment">The geothermal heat pump helps in cold, dark Montana winters</li>
-        </ul>
+        <h2>Our Choice: (5, 1)</h2>
+        <p class="choice-line"><b>5 solar systems + 1 geothermal</b> · $200,000 · 7,000 kWh/month</p>
+        <ol class="reasons">
+          <li>(5, 1) gives the most energy of any mix that works: 7,000 kWh, which is 1,000 over the goal.</li>
+          <li>(6, 0) also works. It costs $180,000, so it is $20,000 less.</li>
+          <li>We still choose (5, 1). The geothermal unit helps in cold Montana winters, so we spend the full budget.</li>
+        </ol>
       </section>
 
       <section data-title="Design map">
-        <h2>Design Map · Whitefish Grid</h2>
+        <h2>Whitefish Grid Map</h2>
         <button type="button" class="zoom-hit" id="designMapZoom" aria-label="Enlarge the design map">
           <img src="images/design-map.png" alt="Whitefish Green Energy Grid diagram with 5 solar, 1 geothermal, and the neighborhood">
         </button>
-        <p class="small">5 solar systems (10 kW each) and 1 geothermal unit feed the neighborhood loads. The map artwork says “panels”; each solar box is one system, not one panel.</p>
+        <p class="small">5 solar systems (10 kW each) and 1 geothermal unit feed the neighborhood. The map artwork says “panels”; each solar box is one system, not one panel.</p>
       </section>
 
-      <!-- Vertical stack: Google Sheet, then the backup slot, then the totals. -->
+      <!-- Vertical stack: sheet evidence, algebra check, then emissions. -->
       <section data-title="Sheet">
         <section data-title="Google Sheet" id="sheet-slide">
-          <h2>Google Sheet</h2>
-          <p class="small">Full sheet: <a href="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/edit">Cost and Emissions Analysis</a></p>
+          <h2>Cost and Emissions Sheet</h2>
+          <p class="small">Open the full sheet: <a href="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/edit">Cost and Emissions Analysis</a>. Next slides walk through the same numbers without the frame.</p>
           <div class="sheet-frame scroll-panel" data-prevent-swipe>
             <iframe title="Cost and Emissions Analysis spreadsheet" src="https://docs.google.com/spreadsheets/d/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw/preview"></iframe>
           </div>
-          <p class="small">If the frame asks you to sign in, use the link above. Scrolling inside the frame stays in the sheet. The backup screenshot is the next slide down.</p>
-        </section>
-
-        <section data-title="Backup" id="backup-slide">
-          <h2>Backup screenshot</h2>
-          <p class="small">A still image of the sheet, for when the live Google Sheet does not load.</p>
-          <div id="backupSlot">
-            <button type="button" class="zoom-hit" id="backupZoom" hidden aria-label="Enlarge the backup screenshot">
-              <img id="backupImg" alt="Backup screenshot of the Cost and Emissions spreadsheet" src="images/sheet-backup.png">
-            </button>
-            <div id="backupEmpty" class="shot-empty">
-              <p><strong>Empty screenshot slot</strong></p>
-              <p>No backup image is in the repo yet. This box is not a made-up picture of the sheet.</p>
-              <p>Save James's screenshot as <code>images/sheet-backup.png</code> (next to the design map) and reload.</p>
-            </div>
-          </div>
+          <p class="small">If the frame asks you to sign in, use the link above. Scroll down for the algebra check.</p>
         </section>
 
         <section data-title="Totals" id="totals-slide">
-          <h2>Spreadsheet Analysis</h2>
+          <h2>Check (5, 1) Against the Inequalities</h2>
           <table class="mixes">
-            <tr><th>Item</th><th>Amount</th></tr>
-            <tr><td>Solar install (5 × $30,000)</td><td>$150,000</td></tr>
-            <tr><td>Geothermal install (1 × $50,000)</td><td>$50,000</td></tr>
-            <tr class="best"><td>Total install</td><td>$200,000</td></tr>
-            <tr><td>Est. yearly maintenance (2% solar + 3% geo)</td><td>$4,500</td></tr>
-            <tr><td>Monthly energy</td><td>7,000 kWh</td></tr>
+            <tr><th>Step</th><th>Work</th></tr>
+            <tr><td>Solar cost</td><td>5 × $30,000 = $150,000</td></tr>
+            <tr><td>Geothermal cost</td><td>1 × $50,000 = $50,000</td></tr>
+            <tr class="best"><td>Total cost</td><td>$200,000</td></tr>
+            <tr><td>Monthly energy</td><td>5 × 1,100 + 1 × 1,500 = 7,000 kWh</td></tr>
           </table>
-          <p class="small fragment">Lifecycle emissions ≈ 42 g CO₂e/kWh for this mix vs ≈ 820 g for coal. Same 7,000 kWh from coal ≈ 5.7 tons CO₂e; this mix ≈ 0.3 tons.</p>
+          <p class="check-line"><b>Budget:</b> 30,000 × 5 + 50,000 × 1 = 200,000, and 200,000 ≤ 200,000 ✓</p>
+          <p class="check-line"><b>Energy:</b> 1,100 × 5 + 1,500 × 1 = 7,000, and 7,000 ≥ 6,000 ✓</p>
+        </section>
+
+        <section data-title="Emissions" id="emissions-slide">
+          <h2>Emissions for the Same 7,000 kWh</h2>
+          <table class="mixes">
+            <tr><th>Source</th><th>How we got the number</th><th>About</th></tr>
+            <tr class="best"><td>Our mix</td><td>(5,500 × 43 + 1,500 × 37) / 7,000 ≈ 42 g per kWh<br>7,000 × 42 g = 294,000 g</td><td>0.3 metric tons</td></tr>
+            <tr><td>Coal plant</td><td>2.31 lb CO₂ per kWh (about 1,050 g)<br>7,000 × 2.31 lb = 16,170 lb</td><td>about 7.3 metric tons</td></tr>
+          </table>
+          <p class="small">The 42 g figure counts the whole life of the gear. The coal number is only what the power plant puts out.</p>
         </section>
       </section>
 
       <section data-title="Summary">
-        <h2>Summary + Conclusion</h2>
-        <p>Whitefish needs at least 6,000 kWh a month and cannot spend more than $200,000.</p>
-        <p class="fragment">The inequalities show every mix that works. Point (5, 1) is the best: 5 solar systems and 1 geothermal.</p>
-        <p class="fragment">That mix hits the budget, beats the energy goal by 1,000 kWh, keeps yearly upkeep around $4,500, and cuts emissions way below coal power.</p>
-        <p class="fragment"><b>Town Hall line:</b> This plan gives Whitefish clean power for winter and summer without going over budget.</p>
+        <h2>Takeaway</h2>
+        <p>Stay under $200,000 and hit at least 6,000 kWh/month.</p>
+        <p><b>Best plan:</b> 5 solar systems + 1 geothermal → $200,000 and 7,000 kWh/month.</p>
+        <p>Same monthly energy: about <b>0.3 metric tons</b> from this mix vs about <b>7.3 metric tons</b> from coal.</p>
+        <p class="town-hall"><b>Town Hall line:</b> This plan gives Whitefish clean power in winter and summer without going over budget.</p>
       </section>
 
       <section data-title="Sources">
         <h2>Sources</h2>
-        <ul style="text-align:left;">
-          <li class="small">Class project data (Whitefish cost and energy spreadsheet)</li>
-          <li class="small">U.S. EIA — How much CO₂ per kWh of U.S. electricity (faq id 74)</li>
-          <li class="small">Ember — US Electricity 2025 special report (grid ≈ 384 g CO₂/kWh in 2024)</li>
-          <li class="small">Alliance for Innovation and Infrastructure — 2024 Energy Spotlights (solar ≈ 43 g, geothermal ≈ 37 g CO₂e/kWh)</li>
-          <li class="small">reveal.js — presentation framework (revealjs.com)</li>
-          <li class="small">https://www.desmos.com/ - sheets and graphs</li>
+        <ul class="sources">
+          <li>Class project data — Whitefish cost and energy spreadsheet</li>
+          <li>U.S. EIA FAQ 74 — coal plants made 2.31 lb CO₂ per kWh in 2023 (plant output only)</li>
+          <li>Ember — US Electricity 2025 (U.S. grid ≈ 384 g CO₂/kWh in 2024)</li>
+          <li>Alliance for Innovation and Infrastructure, 2024 Energy Spotlights — solar ≈ 43 g, geothermal ≈ 37 g CO₂e/kWh over the life of the gear</li>
+          <li>reveal.js — presentation framework (revealjs.com)</li>
+          <li>https://www.desmos.com/ - sheets and graphs</li>
         </ul>
       </section>
 
       <!-- Far-right stack: thank you, then the code appendix underneath. -->
       <section data-title="Thanks">
         <section data-title="Thank you" id="thanks-slide">
-          <h2>Thank you! Questions?</h2>
-          <p class="small">Green Cities · Powering Whitefish, Montana</p>
-          <p class="small">Scroll down for the code appendix. The samples are copied from this repo.</p>
+          <h2>Thank you — questions?</h2>
+          <p>Green Cities · Powering Whitefish, Montana</p>
+          <p class="small">Optional: scroll down for code samples from this repo.</p>
         </section>
 
         <section data-title="Code: math" id="code-math">
