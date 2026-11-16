@@ -239,7 +239,7 @@ async function slideText(page, title, limit = 160) {
 const recommendation = await slideText(page, "Recommendation");
 check("recommendation slide renders", recommendation.h > 80 && /Great/.test(recommendation.text), JSON.stringify(recommendation));
 const sources = await slideText(page, "Sources", 8000);
-check("sources slide renders", sources.h > 40 && /Sources/.test(sources.text) && /Class project data/.test(sources.text), JSON.stringify(sources));
+check("sources slide renders", sources.h > 40 && /Sources/.test(sources.text) && /PVWatts Calculator/.test(sources.text) && !/Class project data/.test(sources.text), JSON.stringify(sources));
 
 const gateStatus = await page.evaluate(async () => {
   const response = await fetch("gate.js");
