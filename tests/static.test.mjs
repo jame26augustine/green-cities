@@ -73,7 +73,7 @@ test("sheet stack, solution check, and real code excerpts", () => {
   assert.doesNotMatch(html, /design-map\.png/);
   assert.doesNotMatch(html, /designMapZoom/);
   assert.match(html, /docs\.google\.com\/spreadsheets\/d\/1whMuZpSx6jRDZ3ja50ZYMfzMmvQwZYRUCGrA3F845Gw\/edit/);
-  assert.match(html, /Class project data/);
+  assert.doesNotMatch(html, /Class project data/);
   assert.doesNotMatch(html, /desmos\.com/);
   assert.doesNotMatch(html, /revealjs\.com/);
   assert.match(html, /function decideWheel\(input\)/);

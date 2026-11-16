@@ -344,11 +344,3 @@ html[data-motion="reduce"] #scrollCue .chev { animation: none !important; }
   font-weight: 400;
   text-decoration: none;
 }
-.reveal .source-foot {
-  margin: 0.55em 0 0;
-  padding-top: 0.35em;
-  border-top: 1px solid var(--border);
-  font-size: 0.46em;
-  line-height: 1.3;
-  color: var(--muted);
-}
