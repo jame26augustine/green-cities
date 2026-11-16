@@ -227,18 +227,18 @@ const labels = await page.evaluate(() => {
 });
 check("status labels are Great, Good, and Bad", labels.great === "Great" && labels.good === "Good" && labels.short === "Bad · Not enough energy" && labels.over === "Bad · Over budget", JSON.stringify(labels));
 
-async function slideText(page, title) {
-  return page.evaluate((title) => {
+async function slideText(page, title, limit = 160) {
+  return page.evaluate((title, limit) => {
     const el = document.querySelector('[data-title="' + title + '"]');
     const index = Reveal.getIndices(el);
     Reveal.slide(index.h, index.v);
     const box = el.getBoundingClientRect();
-    return { text: (el.innerText || "").slice(0, 160), h: box.height, w: box.width };
-  }, title);
+    return { text: (el.innerText || "").slice(0, limit), h: box.height, w: box.width };
+  }, title, limit);
 }
 const recommendation = await slideText(page, "Recommendation");
 check("recommendation slide renders", recommendation.h > 80 && /Great/.test(recommendation.text), JSON.stringify(recommendation));
-const sources = await slideText(page, "Sources");
+const sources = await slideText(page, "Sources", 8000);
 check("sources slide renders", sources.h > 40 && /Sources/.test(sources.text) && /Class project data/.test(sources.text), JSON.stringify(sources));
 
 const gateStatus = await page.evaluate(async () => {
